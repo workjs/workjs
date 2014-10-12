@@ -1,7 +1,6 @@
 {
   "name": "workjs",
   "version": "0.1.0",
-  "private": true ,
   "description": "WorkJS core and glue package",
   "repository": "https://github.com/workjs/workjs.git",
   "keywords": ["workjs", "framework"],
