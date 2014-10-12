@@ -1,0 +1,14 @@
+{
+  "name": "workjs",
+  "version": "0.1.0",
+  "private": true ,
+  "description": "WorkJS core and glue package",
+  "repository": "https://github.com/workjs/workjs.git",
+  "keywords": ["workjs", "framework"],
+  "main": "./index.js",
+  "engines": {
+    "node": "^0.11.13"
+  },
+  "author": "Franz Penz",
+  "license": "MIT"
+}
