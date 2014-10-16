@@ -1,17 +1,38 @@
 # WorkJS Core
 
-* Core functionality
-* currently only implements routes to static files in modules
+* WorkJS core functionality
+* based on [koa](https://github.com/koajs/koa)
+* boilerplate code to create http and websocket server
+* defines the middleware set to be used in the application map
+* default configuration
+* routes to static files in modules
+* master layout
 
 WorkJS modules - npm packages and modules mounted via the map - can be registered.  
 The WorkJS Core provides services for registered modules.
 
-Currently adds static routes for all registered modules and provides a function 
+An application is registered with the key "main". 
+WorkJS creates a http and a websocket server for the allication.
+
+WorkJS adds static routes for all registered modules and provides a function 
 to add scripts located in the static folder of a registered module.
 
 # Installation
 ```
 $ npm install workjs
+```
+# Use
+
+## Application
+
+```
+var work = require("workjs").register("main", {dirname: __dirname});
+```
+
+## Module
+
+```
+var work = require("workjs").register("my_key", {dirname: __dirname});
 ```
 
 # API
