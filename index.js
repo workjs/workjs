@@ -33,25 +33,27 @@ function work(key, opts) {
     app.work.db = app.work.config.db;
     //app.work.cr = app.work.config.cr;
     
+    var middlewares = [];
+    
+    middlewares.push({key:'ws', fn:require('work-socket').mw});
+    middlewares.push({key:'FS', fn:require('work-fileserver')()});
+    middlewares.push({key:'CSRF', fn:require('work-csrf')({sysurl:app.work.config.sysurl})});
+    middlewares.push({key:'session', fn:require('work-session')()});
+    middlewares.push({key:'MiA', fn:MA});
+    if (app.work.db) middlewares.push({key:'dbR', fn:app.work.db.rollback});
+    if (app.work.db) middlewares.push({key:'dbC', fn:app.work.db.commit});
+    middlewares.push({key:'form', fn:require('work-body').form({limit:'100kb'})});
+    middlewares.push({key:'json', fn:require('work-body').json({limit:'2mb'})});
+    middlewares.push({key:'multipart', fn:require('work-body')
+             .multipart({uploadDir:__dirname+'/incoming', hash:'MD5'})});
+    middlewares.push({key:'MiB', fn:MB()});
+    middlewares.push({key:'MiC', fn:MC()});
+    middlewares.push({key:'tma', fn:testA()});
+    middlewares.push({key:'tmb', fn:testB()});
+    middlewares.push({key:'tmc', fn:testC()});
+    
     app.router = require('work-router')({
-      middlewares: [
-      {key:'ws', fn:require('work-socket').mw},
-      {key:'FS', fn:require('work-fileserver')()},
-      {key:'CSRF', fn:require('work-csrf')({sysurl:app.work.config.sysurl})},
-      {key:'session', fn:require('work-session')()},
-      {key:'MiA', fn:MA},
-      {key:'dbR', fn:app.work.db.rollback},
-      {key:'dbC', fn:app.work.db.commit},  
-      {key:'form', fn:require('work-body').form({limit:'100kb'})},
-      {key:'json', fn:require('work-body').json({limit:'2mb'})},  
-      {key:'multipart', fn:require('work-body')
-         .multipart({uploadDir:__dirname+'/incoming', hash:'MD5'})},
-      {key:'MiB', fn:MB()},
-      {key:'MiC', fn:MC()},
-      {key:'tma', fn:testA()},
-      {key:'tmb', fn:testB()},
-      {key:'tmc', fn:testC()} 
-      ],
+      middlewares: middlewares,
       static_middlewares: ["FS{root:'static'}"],
       dirname: opts.dirname,
       template_compile: app.work.config.template_compile,

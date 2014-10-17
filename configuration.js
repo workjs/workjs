@@ -17,9 +17,9 @@ module.exports.multipart_limit = "200mb";
 module.exports.upload_hash = "md5";
 */
 
-var db = require('work-pg')({dburl:'pg://fp@localhost/work', poolsize:20});
+//var db = require('work-pg')({dburl:'pg://fp@localhost/work', poolsize:20});
 //var db = require('work-pg')({dburl:'pg://fp@/var/run/postgresql/.s.PGSQL.5432/work', poolsize:20});
-module.exports.db = db;
+//module.exports.db = db;
 
 /*
 var cr = require('./core/cr/crm').crmgr(__dirname+'/CR', 'A');
