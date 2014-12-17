@@ -1,134 +1,80 @@
-//workJS core and glue
+// workJS core and glue module
+// create koa application
+// extend module prototype
+// create and use router
+// create http and websocket server
+// watch files for auto hot-reloading
 
-var koa = require('koa');
-var app = koa();
+console.log("LOADING WorkJS CORE");
 
-var modules = {};
-module.exports.modules = modules;
+var fs = require('fs');
+var path = require('path');
 
-var conf = {};
-module.exports.conf = conf;
+require('./lib/work-module');
+var w = module.exports = module.work;
 
-module.exports.register = function workjs(key, opts) {
-  var w = new work(key, opts);
-  return(w);
+//w.rootdir = path.dirname(require.main.filename);
+w.rootdir = process.cwd();
+if (fs.existsSync(w.rootdir + '/configuration')) {
+  w.conf = module.require(w.rootdir + '/configuration');
+} else {
+  w.conf = {};
+  console.log("WARN - Configuration file NOT found at: "+w.rootdir + '/configuration');
 };
 
-function work(key, opts) {
-  this.key = key;
-  this.app = app;
-  console.log("REGISTER module <", key, ">");
+var templating = module.require_orig('work-templating')({path: w.rootdir + '/layouts'});
+w.template_compile = templating.compile;
+w.template_render = templating.render;
+
+w.add_js = function add_js(controler, work_key, target) {
+  controler.locals._js.push('/' + work_key + '/' + target); };
+w.add_css = function add_css(controler, work_key, target) {
+  controler.locals._css.push('/' + work_key + '/' + target); };
+
+//w.db = require('work-pg')({dburl: w.db_url, poolsize: w.db_poolsize});
+
+/*
+var crm = require('./core/cr/crm');
+if (w.cr_root) {
+  if (w.cr_root[0] === '/') {
+    w.cr = crm.crmgr(w.cr_root, w.cr_partition);
+  } else {
+    w.cr = crm.crmgr(w.rootdir + '/' + w.cr_root, w.cr_partition);
+  };
+};
+w.cr_uploaddir = cr.entrance;
+*/
+
+// var smtp = require('./core/smtp').smtp(w.smtp_transport, w.smtp_user, w.smtp_password);
+
+w.app = require('koa')();
+w.app.work = w;
+w.app.keys = w.conf.session_secrets;
+
+////////////////////////////////////////////////////////////////////////
+
+//var core_middlewares = require('./middlewares')();
+
+w.coredir = __dirname;
+
+if (w.conf.verbs) { w.verbs = w.conf.verbs
+} else { w.verbs = ["get", "post", "put", "head", "delete", "options",
+  "trace", "copy", "lock", "mkcol", "move", "propfind", "proppatch",
+  "unlock", "report", "mkactivity", "checkout", "merge", "m-search",
+  "notify", "subscribe", "unsubscribe", "patch", "search"]
+};
+
+w.static_middlewares = ["FS"];
+
+w.router = module.require_orig('work-router');
+
+w.router.init(w);
+
+w.router.addStatic();
   
-  if (key === 'main') {
-    conf.media_prefix = '/' + (opts && opts.media_prefix || '_');
-    
-    app.work = {
-      dirname: opts.dirname,
-      config: require(__dirname+'/configuration'),
-      app: app
-    };
-    
-    app.keys = app.work.config.session_secrets;
-    
-    app.work.db = app.work.config.db;
-    //app.work.cr = app.work.config.cr;
-    
-    var middlewares = [];
-    
-    middlewares.push({key:'ws', fn:require('work-socket').mw});
-    middlewares.push({key:'FS', fn:require('work-fileserver')()});
-    middlewares.push({key:'CSRF', fn:require('work-csrf')({sysurl:app.work.config.sysurl})});
-    middlewares.push({key:'session', fn:require('work-session')()});
-    middlewares.push({key:'MiA', fn:MA});
-    if (app.work.db) middlewares.push({key:'dbR', fn:app.work.db.rollback});
-    if (app.work.db) middlewares.push({key:'dbC', fn:app.work.db.commit});
-    middlewares.push({key:'form', fn:require('work-body').form({limit:'100kb'})});
-    middlewares.push({key:'json', fn:require('work-body').json({limit:'2mb'})});
-    middlewares.push({key:'multipart', fn:require('work-body')
-             .multipart({uploadDir:__dirname+'/incoming', hash:'MD5'})});
-    middlewares.push({key:'MiB', fn:MB()});
-    middlewares.push({key:'MiC', fn:MC()});
-    middlewares.push({key:'tma', fn:testA()});
-    middlewares.push({key:'tmb', fn:testB()});
-    middlewares.push({key:'tmc', fn:testC()});
-    
-    app.router = require('work-router')({
-      middlewares: middlewares,
-      static_middlewares: ["FS{root:'static'}"],
-      dirname: opts.dirname,
-      template_compile: app.work.config.template_compile,
-      template_render: app.work.config.template_render,  
-      watch: app.work.config.DEVELOPMENT
-    });
-    
-    app.use(app.router);
-    
-    var httpserver = require('http').Server(app.callback());
-    var woss = require('work-socket').server({server: httpserver, keys: app.keys});
-    httpserver.listen(app.work.config.port);
-  };
-
-  //register dirname only once, i.e. multiple registrations on the same module 
-  // result in only one file system path
-  if (opts && opts.dirname && !modules[key]) {
-    modules[key] = {dirname: opts.dirname};
-  };
+w.app.use(w.router.route);
   
-};
-
-work.prototype.media_url = function static_url(target) {
-  return(conf.media_prefix + '/' + this.key + '/' + target);
-};
-
-//add script reference to page
-work.prototype.add_js = function add_js(mod, target) {
-  mod.locals.__js.push(this.media_url(target));
-};
-
-function *MA(next){
-      console.log("LOG MA Start", this.sessionKey, this.sessionOptions);
-      yield* next;
-      console.log("LOG MA End", this.session, this.locals);
-};
-
-function MB(opts) {
-    return function *MB(next){
-      console.log("LOG MB Start");
-      yield* next;
-      console.log("LOG MB End");
-    };
-};
-
-function MC(opts) {
-  return function MC(opts) {
-    return function *MC(next){
-      console.log("LOG MC Start");
-      yield* next;
-      console.log("LOG MC End");
-    };
-  };
-};
-
-function testA(opts) {
-    return function *testA(next){
-      this.set('X-TestX', 'A');
-      this.set('X-TestY', 'A');
-      yield* next;
-    };
-};
-
-function testB(opts) {
-    return function *testB(next){
-      this.set('X-TestX', 'B');
-      yield* next;
-    };
-};
-
-function testC(opts) {
-    return function *testC(next){
-      this.set('X-TestX', 'C');
-      yield* next;
-    };
-};
-
-                  
+w.httpserver = require('http').Server(w.app.callback());
+w.woss = require('work-socket').server({server: w.httpserver, keys: w.app.keys});
+  
+w.httpserver.listen(w.conf.port);

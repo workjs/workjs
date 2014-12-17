@@ -1,20 +1,21 @@
 {
   "name": "workjs",
-  "version": "0.2.0",
+  "version": "0.6.0",
   "description": "WorkJS core and glue package",
   "repository": "https://github.com/workjs/workjs.git",
   "keywords": ["workjs", "framework"],
   "main": "./index.js",
   "dependencies": {
     "koa": "^0.5.5",
-    "work-session": "^0.0.1",
-    "work-body": "^0.0.2",
-    "work-csrf": "*",
-    "work-fileserver": "^0.0.1",
+    "work-session": "^0.6.0",
+    "work-body": "^0.6.0",
+    "work-csrf": "^0.6.0",
+    "work-fileserver": "^0.6.0",
     "work-pg": "^0.0.5",
-    "work-router": "^0.3.0",
-    "work-templating": "^0.0.2",
-    "work-socket":"^0.0.1"
+    "work-router": "^0.6.0",
+    "work-templating": "^0.6.0",
+    "work-socket":"^0.0.1",
+    "resolve": "^1.0.0"
   },
   "engines": {
     "node": "^0.11.13"
