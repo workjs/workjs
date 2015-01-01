@@ -5,7 +5,8 @@ var w = module.work;
 w.MW = {};
 w.mw = {};
 
-//w.MW.WS = require('work-socket').mw;
+w.MW.WS = require('work-socket').mw;
+w.mw.WS = w.MW.WS();
 
 w.MW.FS = require('work-fileserver');
 w.mw.FS = w.MW.FS({root:'static'});
