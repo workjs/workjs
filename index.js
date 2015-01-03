@@ -63,10 +63,10 @@ w.router = module.require('work-router')();
 
 /// -> move into router??
 w.add_js = function add_js(controler, work_key, target) {
-  console.log("add_js:", '//' + work_key + '/' + target);
-  controler.locals._js.push('//' + work_key + '/' + target); };
+  console.log("add_js:", './/' + work_key + '/' + target);
+  controler.locals._js.push('.//' + work_key + '/' + target); };
 w.add_css = function add_css(controler, work_key, target) {
-  controler.locals._css.push('//' + work_key + '/' + target); };
+  controler.locals._css.push('.//' + work_key + '/' + target); };
 
   
 w.app.use(w.router);
