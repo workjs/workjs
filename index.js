@@ -33,7 +33,8 @@ w.template_compile = templating.compile;
 w.template_render = templating.render;
 
 //load database subsystem
-//w.db = require('work-pg')({dburl: w.db_url, poolsize: w.db_poolsize});
+if (w.conf.db_url) 
+  w.db = require('work-pg')({dburl:w.conf.db_url, poolsize:w.conf.db_poolsize});
 
 //load content repository subsystem
 /*

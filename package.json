@@ -1,6 +1,6 @@
 {
   "name": "workjs",
-  "version": "0.7.0",
+  "version": "0.7.2",
   "description": "WorkJS core and glue package",
   "repository": "https://github.com/workjs/workjs.git",
   "keywords": ["workjs", "framework"],
@@ -11,7 +11,7 @@
     "work-body": "^0.7.0",
     "work-csrf": "^0.7.0",
     "work-fileserver": "^0.7.0",
-    "work-pg": "^0.0.5",
+    "work-pg": "^0.7.0",
     "work-router": "^0.7.0",
     "work-templating": "^0.7.0",
     "work-socket":"^0.0.1",
