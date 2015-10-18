@@ -1,0 +1,8 @@
+{% extends "master.html" %}
+
+{% block content %}
+{% include "www/ds.incl" %} 
+<pre style="background:grey;min-height:100px">
+{{ r }}
+</pre>
+{% endblock %}

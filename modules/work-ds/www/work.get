@@ -1,0 +1,9 @@
+{% extends "master.html" %}
+
+{% block content %}
+<h1>ds: Work Object</h1>
+The Work Object is attached to the global module structure.
+<pre>module.work =
+
+{{ r }}</pre>
+{% endblock %}

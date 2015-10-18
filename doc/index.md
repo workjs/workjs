@@ -1,14 +1,3 @@
-# WorkJS
-
-This is the WorkJS core package.
-It replaces the previous WorkJS Core module.
-The functionality of several work modules is now contained here.
-
-WorkJS currently provides only a small portion of the functionality planned.
-Even so I think it is the first viable WorkJS version which delivers value to its user.
-
-More documentation is included in the quick start demo installation.
-
 # WorkJS Quick Start
 
 WorkJS is a Web Application Framework based on [node.js](https://nodejs.org/)

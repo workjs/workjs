@@ -1,0 +1,13 @@
+{% extends "master.html" %}
+
+{% block content %}
+Developer Support:
+<ul>
+<li><a href="conf">Configuration of this Application</a>
+<li><a href="map">Site-Map</a>
+<li><a href="shell">Developer Shell</a>
+<li><a href="work">Work Data Structure</a>
+<li><a href="cookies">Cookies</a>
+<li><a href="session">Session</a>
+</ul>
+{% endblock %}

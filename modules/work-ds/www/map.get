@@ -1,0 +1,29 @@
+{% extends "master.html" %}
+
+{% block content %}
+<style>table,th,td {border:1px solid;padding:4px;border-collapse: collapse;}</style>
+<h1>ds: Site-Map</h1>
+<table>
+<tr><th>Urlpath
+<th>Verb
+<th>Target
+<th>Package
+<th>Location
+<th>varname
+<th>Flags
+</tr>
+{% for path in r  %}
+{% for verb in verbs %}{% if ro[path][verb].n %}
+<tr><td><a href="{{path}}">{{path}}</a>
+<td>{{verb}}
+<td{%if not ro[path][verb].n.handler %} style="color:red"{% endif %}>{{ro[path][verb].n.target}}
+<td>{{ro[path][verb].n.pkg.name}}
+<td>{{ro[path][verb].n.pkg.dirname}}
+<td>{{ro[path][verb].n.varname}}
+<td>{{ro[path][verb].flags}}
+</tr>
+{% endif %}{% endfor %}
+{% endfor %}
+</table>
+<pre>{{x}}</pre>
+{% endblock %}

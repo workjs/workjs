@@ -1,0 +1,12 @@
+{
+  "name": "work-ds",
+  "version": "0.0.1",
+  "private": true,
+  "description": "WorkJS Developer Support",
+  "keywords": [
+    "workjs", "development"
+  ],
+  "engines": { "node": "^4.0.0" },
+  "author": "Franz Penz",
+  "license": "MIT"
+}

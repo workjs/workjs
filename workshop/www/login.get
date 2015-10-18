@@ -1,0 +1,7 @@
+{% extends "master.html" %}
+
+{% block content %}
+<form method="post">
+Login: <input name="login">
+</form>
+{% endblock %}

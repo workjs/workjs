@@ -1,0 +1,11 @@
+{% extends "master.html" %}
+
+{% block content %}
+<h1>ds: Cookies</h1>
+Current WorkJS Cookies:
+<pre>{{ r }}</pre>
+
+<form method="POST" enctype="multipart/form-data">
+<input value="CLEAR" type="submit">
+</form>
+{% endblock %}

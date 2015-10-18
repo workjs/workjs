@@ -1,0 +1,12 @@
+
+/	get	www/home
+
+/conf	get	www/configuration
+/map	get	www/map
+
+/shell	get	www/shell
+/shell	post	www/shell	{"dbCommit":"t"}
+
+/work	get	www/work
+/cookies *	www/cookies
+/session get	www/session

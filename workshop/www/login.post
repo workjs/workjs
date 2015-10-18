@@ -1,0 +1,12 @@
+{% extends "master.html" %}
+
+{% block content %}
+Login
+<pre>{{data}}</pre>
+<pre>
+Session:
+id = {{sess.id}}
+last = {{sess.last}}
+data = {{sess.data}}
+</pre>
+{% endblock %}

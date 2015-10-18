@@ -1,0 +1,34 @@
+{% extends "master.html" %}
+
+{% block content %}
+<style>table,th,td {border:1px solid;padding:4px;border-collapse:collapse;text-align:center;}</style>
+<h2>Sessions:</h2>
+
+Configuration:<br>
+Fresh: {{session.fresh}} Seconds = Time in seconds which a session if not cached is assumed to be empty.<br>
+Update: {{session.update}} Seconds = Time to wait before we update the session access time in the database.<br>
+Decline: {{session.decline}} Seconds = Time after which a session if not used is dropped.<br>
+Sweep: {{session.sweep}} Seconds = Interval to run the sweep function to clean declined sessions from cache and database.<br>
+
+<br><br>
+Last Sweep: {{lastSweep}} - Next Sweep: in {{nextSweep}} Seconds
+
+<br><br>
+<table>
+<tr><th>cache
+<th>ID
+<th>start
+<th>last update
+<th>data
+<th>decline</tr>
+{% for row in tab  %}
+<tr><td>{{row.cache}}
+<td>{{row.id}}
+<td>{{row.start}}
+<td>{{row.last}}
+<td>{{row.data}}
+<td>{{row.decline}}</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

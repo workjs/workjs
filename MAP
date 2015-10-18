@@ -1,0 +1,5 @@
+/static/*	get	www/fileserver {"logAccess":"f", "session":"f"}
+
+/doc/*	get	www/docserver	{"session":"f"}
+
+/ds	*	:./modules/work-ds	{"logDetail":"t", "dbCommit":"f"}

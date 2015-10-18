@@ -1,0 +1,8 @@
+<h1>Developer Shell!</h1>
+
+<pre>{{ oo }}</pre>
+
+<form method="POST" enctype="multipart/form-data">
+<textarea style="width:100%;min-height:200px" name="code">{{ code }}</textarea>
+<br><input type="submit"><br><br>
+</form>

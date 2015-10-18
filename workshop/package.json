@@ -1,0 +1,21 @@
+{
+  "name": "workshop",
+  "version": "0.0.1",
+  "private": true,
+  "description": "WorkJS Demo Package",
+  "keywords": [
+    "workjs", "demo"
+  ],
+  "main": "app.js",
+  "scripts": {
+    "start": "node --stack_trace_limit=30 app.js"
+  },
+  "dependencies": {
+    "workjs": "1.0.0"
+  },
+  "engines": {
+    "node": "^4.0.0"
+  },
+  "author": "Franz Penz",
+  "license": "MIT"
+}

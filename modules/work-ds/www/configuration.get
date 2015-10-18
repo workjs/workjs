@@ -1,0 +1,12 @@
+{% extends "master.html" %}
+
+{% block content %}
+<style>table,th,td {border:1px solid;padding:4px;border-collapse: collapse;}</style>
+<h1>ds: Configuration of this Application</h1>
+<table>
+<tr><th>Property<th>Value</tr>
+{% for prop, val in r  %}
+<tr><td>{{prop}}<td>{{val}}</tr>
+{% endfor %}
+</table>
+{% endblock %}
