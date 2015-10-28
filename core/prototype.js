@@ -16,6 +16,8 @@ Work.prototype.work = module.work;
 var DEVELOPMENT = Work.prototype.DEVELOPMENT 
   = (module.work.conf.servermode == "DEVELOPMENT");
 
+Work.prototype.error = null;
+
 //finalize request, reply my body
 Work.prototype.end = function end() {
 //  if (!res.headersSent) {

@@ -15,39 +15,30 @@ w.wsserver = require('./work-socket.js').server(w.httpserver);
 function listener(req, res) {
   //req.setEncoding('utf8');
   var work = new Work(req, res);
-  Sync(function request_handler(){
-    try {
+  Sync(function request_handler() {
       route.call(work);
-      //if response not already send - e.g. fileserver does
-/*      if (!res.headersSent) {
-        if (typeof work.body !== 'undefined') {
-          res.setHeader("Content-Type", "text/html; charset=utf-8");
-          res.setHeader("Content-Length", Buffer.byteLength(work.body));
-          res.write(work.body);
+      if (work.error) {
+        var e = work.error;
+        w.log("ERROR " + e.message + "\n\n" + e.stack);
+        if (!res.headersSent) {
+          var status = e.status || 500;
+          var contenttype = e.contenttype || "text/plain";
+          res.writeHead(status, {"Content-Type": contenttype});
+          
+          switch (status) {
+            case 404: res.write("404 Not Found\n"); break;
+            case 500:
+            default:  res.write("500 Internal Server Error\n"); break;
+          };
+          
+          if (DEVELOPMENT) {
+            res.write(e.message);
+            res.write("\n\n"+e.stack);
+          };
+          
           res.end();
         };
-      }
-*/
-    }
-    catch (e) {
-      if (!res.headersSent) {
-        var status = e.status || 500;
-        var contenttype = e.contenttype || "text/plain";
-        res.writeHead(status, {"Content-Type": contenttype});
-        
-        switch (status) {
-          case 404: res.write("404 Not Found\n"); break;
-          case 500:
-          default:  res.write("500 Internal Server Error\n"); break;
-        };
-        
-        res.write(e.message);
-        if (DEVELOPMENT) res.write("\n\n"+e.stack);
-        res.end();
-      } else {
-        w.log("ERROR " + e.message + "\n\n" + e.stack);
       };
-    };
   });
 };
 
@@ -81,7 +72,8 @@ function route() {
         this.context['_location'] = p.slice(i).join('/');
         console.log("//wildcard: " + this.context['_location']);
         n = n.branches['*'];
-        return n.handler.call(this);
+        n.handler.call(this);
+        return
       };
     return this.reply404("no route to: "+this.req.method+' '+this.req.url);
   };

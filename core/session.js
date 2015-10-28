@@ -57,10 +57,10 @@ var get_session = function get_session(next) {
         if (sessionData) { //session in session cache
           this.session = sessionData;
           console.log("session in session cache ****");
-          if (this.id - sessionData.last > w.session.update) { //update acctime in DB
+          if (this.id - sessionData.last > w.session.update) { //update acctime in DB; use own DB TX
              console.log("session Update DB - this.id - sessionData.last > w.session.update: ",
                this.id, sessionData.last, w.session.update);
-            this.tx.query("update work_session set last=:now WHERE id=:id", {id:sessID, now:this.id});
+            w.db.query("update work_session set last=:now WHERE id=:id", {id:sessID, now:this.id});
             w.sessions[sessID].last = this.id;
           } else {
             console.log("session no DB Update: ", sessID);
@@ -68,13 +68,13 @@ var get_session = function get_session(next) {
         } else if (sessionData === undefined) { //no data in session cache
           console.log("session no data in session cache ***");
           if (this.id - sessID > w.session.fresh) { //not fresh -> check in DB
-            sessionData = this.tx.one("select data, last FROM work_session WHERE id=:id", {id:sessID});
+            sessionData = w.db.one("select data, last FROM work_session WHERE id=:id", {id:sessID});
             console.log("session Data from DB: ", sessionData);
             if (sessionData) { //got data from DB -> cache it
               this.session = sessionData;
               w.sessions[sessID] = sessionData;
               if (this.id - sessionData.last > w.session.update) { //update acctime in DB
-                this.tx.query("update work_session set last=:now WHERE id=:id", {id:sessID, now:this.id});
+                w.db.query("update work_session set last=:now WHERE id=:id", {id:sessID, now:this.id});
                 w.sessions[sessID].last = this.id;
               };
             } else { //not in DB -> renew
@@ -85,7 +85,6 @@ var get_session = function get_session(next) {
           }
         } else { this.new_session(); };
       } else { this.new_session(); };
-      
       next();
 };
 

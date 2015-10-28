@@ -97,14 +97,13 @@ module.exports = function(options) {
       _closeLogStreams();
       _creatLogStreams();
     };
-      
+    
     dlogfs.write(datestring+ " "+ this.id
     + " *** [0ms] "
     + this.req.method + " " + this.req.url + "\n");
-
+    
     this.debug = new Logger(this.id, start).log;
     next();
-    
     var end = Date.now();
     var duration = end - start;
     var datestring = dateformat(end, "yyyy-mm-dd/HH:MM:ss");

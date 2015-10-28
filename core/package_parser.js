@@ -18,10 +18,14 @@ function reload() {
 function parse() {
   for (var i = 0; i<w.verbs.length; ++i) {
     var verb = w.verbs[i];
+    var flags = w.flags[verb] || w.defaultflags;
+
     w.map[verb] = new MAPnode();
-    var flags = pass1(verb, w.coredir, '', {});
-    //we mount our application into the root of the core
-    flags = pass1(verb, w.rootdir, '', flags);
+    pass1(verb, w.coredir, '', flags);
+
+    //until we know it better, we mount our application into the root of the core
+    pass1(verb, w.rootdir, '', flags);
+
     build_handler(w.map[verb]);
   };
 
@@ -56,13 +60,6 @@ function MAPnode(){
     this.handler = null;
     
     this.pkg = null;
-};
-
-MAPnode.prototype.hasFlag = function(f) {
-  return (this.flags[f] === "t" || this.flags[f] === "T" ||
-          (typeof(this.flags[f]) === 'object' &&
-           (this.flags[f][this.verb] === "t" 
-            || this.flags[f][this.verb] === "T")))
 };
 
 function add_to_route_map(urlpath, verb, target, flags, pkg) {
@@ -134,42 +131,6 @@ function pass1(verb, dirname, urlprefix, preflags) {
   //store for developer support and watch
   w.packages[pkg.name] = pkg;
   
-/*  //merge flags
-  var flags = {};
-  for (var f in preflags) { flags[f] = preflags[f]; };
-  //merge package flags
-  if (pkg.config && pkg.config['work-flags']) {
-    var workflags = pkg.config['work-flags'];
-    for (var f in workflags) {
-      if (flags[f]) {
-        if (flags[f] === 't' || flags[f] === 'f') {
-          if (typeof workflags[f] === 'object') {
-            if (workflags[f][verb]) flags[f] = workflags[f][verb];
-          } else {
-            flags[f] = workflags[f];
-          };
-        };
-      } else {
-        if (typeof workflags[f] === 'object') {
-          if (workflags[f][verb]) flags[f] = workflags[f][verb];
-        } else {
-          flags[f] = workflags[f];
-        };
-      };
-    };
-  }; */
-  
-  var flags = Object.create(preflags);
-  //merge package flags
-  if (pkg.config && pkg.config['work-flags']) {
-    var workflags = pkg.config['work-flags'];  
-    for (var f in workflags) {
-      if (typeof workflags[f] === 'object') {
-        if (workflags[f][verb]) flags[f] = workflags[f][verb];
-      } else { flags[f] = workflags[f]; };
-    };
-  };
-  
   //parse mapfile
   var mf = fs.readFileSync(mapfile).toString().split('\n');
   mf.forEach( function parse(line) {
@@ -185,18 +146,24 @@ function pass1(verb, dirname, urlprefix, preflags) {
     var routeverb = a[2].toLowerCase();
     if (routeverb !== verb && routeverb !== '*') return;
     
-    var urlpath = (a[1][0] === '=') ? a[1].substring(1) : urlprefix + a[1];
+    switch (a[1][0]) {
+      case "@": var urlpath = urlprefix; break;
+      case "=": var urlpath = a[1].substring(1); break;
+      default: var urlpath = urlprefix + a[1];
+    };
+    
     var target = a[3];
     
-    var rflags = Object.create(flags);
+    var rflags = Object.create(preflags);
     if (a[4]) try {
       var routeflags = JSON.parse(a[4]);
       if (routeflags && typeof routeflags === "object") {
         for (var f in routeflags) {
           if (typeof routeflags[f] === 'object') {
-            if (routeflags[f][verb]) { rflags[f] = routeflags[f][verb];
-            } else if (routeflags[f]['*']) { rflags[f] = routeflags[f]['*']; };
-          } else { rflags[f] = routeflags[f]; };
+            if (routeflags[f][verb]) { 
+              rflags[f] = (routeflags[f][verb] === 'T' || routeflags[f][verb] === 't')
+            }
+          } else { rflags[f] = (routeflags[f] === 'T' || routeflags[f] === 't'); };
         };
       } else { w.log('UNKNOWN flags in: ' + line); };
     } catch (e) {
@@ -219,9 +186,6 @@ function pass1(verb, dirname, urlprefix, preflags) {
       add_to_route_map(urlpath, verb, target, rflags, pkg);
     };
   });
-  
-  //return merged flags
-  return flags;
 };
 
 function build_handler(n) {
@@ -231,12 +195,12 @@ function build_handler(n) {
   if (n.target) {
     var has_DB = false;
     var h = []; //list of functions (modules, controller, view) for this handler
-    if (n.hasFlag("logAccess")) { h.push(w.logger.access); }
-    if (n.hasFlag("logDetail")) { h.push(w.logger.debug); }
-    if (n.hasFlag("formData")) { h.push(w.parseForm); }
-    if (n.hasFlag("dbCommit") || n.hasFlag("session")) { h.push(w.dbm.commit); has_DB = true; }
-    if (!has_DB && n.hasFlag("dbRollback")) { h.push(w.dbm.rollback); has_DB = true; }
-    if (n.hasFlag("session")) { h.push(w.session.get_session); }
+    if (n.flags["logAccess"]) { h.push(w.logger.access); }
+    if (n.flags["logDetail"]) { h.push(w.logger.debug); }
+    if (n.flags["formData"]) { h.push(w.parseFormSync); }
+    if (n.flags["dbCommit"]) { h.push(w.dbm.commit); }
+    if (n.flags["dbRollback"]) { h.push(w.dbm.rollback); }
+    if (n.flags["session"]) { h.push(w.session.get_session); }
     //if null target -> we are finished
     if (n.target === '=') {
       n.handler = null;
@@ -245,7 +209,16 @@ function build_handler(n) {
       var v_path = n.pkg.dirname+'/'+n.target+"."+n.verb;
 
       if (fs.existsSync(c_path)) {
-        try { var c = module.work_require(c_path)[n.verb]; if (c) h.push(c);
+        try { var c = module.work_require(c_path)[n.verb];
+          if (c) h.push(function handler(next) {
+            try {
+              c.call(this, next);
+            }
+            catch (e) {
+              w.log('ERROR in route handler: '+n.verb+' '+n.urlpath+' -> '+n.taget);
+              this.error = e;
+            };
+          });
         } catch (e) {
           w.log('ERROR route to '+n.verb+' '+n.urlpath+' dropped');
           w.log(e);
@@ -280,6 +253,8 @@ function compose(i, mwstack){
     var f = mwstack[i];
     var g = compose(i+1, mwstack);
     return function(){
+//      console.log("hf", f);
+//      console.log("hg", g);
       f.call(this, g.bind(this));
     };
   } else {

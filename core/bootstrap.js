@@ -43,6 +43,15 @@ w.verbs = [];
 for (var i = 0; i<w.conf.verbs.length; ++i)
        w.verbs.push(w.conf.verbs[i].toLowerCase());
 
+//define default flags
+w.flags = {};
+w.flags.get = { "logAccess": true, "logDetail": true, "formData": false,
+  "dbCommit": false, "dbRollback": true, "session": true };
+w.flags.post = { "logAccess": true, "logDetail": true, "formData": true,
+  "dbCommit": true, "dbRollback": false, "session": true };
+w.defaultflags = w.conf.defaultflags || { "logAccess": true, "logDetail": true, "formData": true,
+  "dbCommit": true, "dbRollback": false, "session": true };
+
 w.logger = require("./logger.js")({
   alogdir:w.conf.access_logdir,
   dlogdir:w.conf.debug_logdir,

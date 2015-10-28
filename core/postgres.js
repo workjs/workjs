@@ -75,6 +75,7 @@ function DB() {
     };
     
     this.pg_query_sync = function(arg0, arg1) {
+      var stack = new Error().stack;
       return(tx.pg_query.sync(tx, arg0, arg1));
     };
 
@@ -124,7 +125,6 @@ function DB() {
       for (var i=0; i<p.length; i++) {
         q.push(param[p[i]]);
       };
-      console.log("Select .... ", r, "::::", q);
       return(this.pg_query_sync.call(this, r, q));
     };
     
@@ -167,22 +167,17 @@ function DB() {
 };
 
 //middlewares
-function rollback(next, done) {
+function rollback(next) {
       this.tx = this.work.db.begin();
-      try { next(); }
-      finally { this.tx.rollback(done); }
+      next();
+      this.tx.rollback_sync();
 };
 
-function commit(next, done) {
+function commit(next) {
       this.tx = this.work.db.begin();
-      try {
-        console.log("db ... commit - this.tx", this.tx);
-        next();
-        this.tx.commit(done);
-      } catch (e) {
-        this.tx.rollback(done);
-        throw e;
-      }
+      next();
+      if (this.error) { this.tx.rollback_sync(); }
+      else { this.tx.commit_sync(); }
 };
 
 

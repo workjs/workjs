@@ -1,13 +1,14 @@
 {
   "name": "workjs",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "WorkJS Web Application Framework",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/workjs/workjs.git"
   },
   "keywords": [
-    "node", "framework"
+    "node",
+    "framework"
   ],
   "main": "app.js",
   "scripts": {
@@ -17,6 +18,7 @@
     "workjs": "bin/generate.js"
   },
   "dependencies": {
+    "bcrypt": "^0.8.5",
     "busboy": "^0.2.9",
     "chokidar": "^1.0.1",
     "commander": "^2.8.1",
@@ -39,24 +41,5 @@
   "author": {
     "name": "Franz Penz"
   },
-  "license": "MIT",
-  "config": {
-    "work-flags": {
-      "formData": {
-        "get": "f",
-        "post": "t"
-      },
-      "dbCommit": {
-        "get": "f",
-        "post": "t"
-      },
-      "dbRollback": {
-        "get": "t",
-        "post": "f"
-      },
-      "logAccess": "t",
-      "logDetail": "t",
-      "session": "t"
-    }
-  }
+  "license": "MIT"
 }

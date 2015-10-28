@@ -31,6 +31,11 @@ function list(n) {
     ro[n.urlpath][n.verb] = {};
     ro[n.urlpath][n.verb].n=n;
     ro[n.urlpath][n.verb].flags=util.inspect(n.flags);
+    var flags = "";
+    for (var f in w.defaultflags) {
+      if (n[f]) { flags += " +"+f; } else { flags += " -"+f; }
+    };
+    ro[n.urlpath][n.verb].flags=flags;
 /*    if (ro[n.urlpath][n.verb].n.handler) {
       ro[n.urlpath][n.verb].handler=n.handler.toString();
     } else {

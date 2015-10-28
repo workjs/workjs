@@ -31,9 +31,9 @@ triggers a function "post" located in a file "auth/login.js" and/or uses a html 
 in a file "www/home.post" to render a reply page.
 
 ## Urlpath
-The urlpath is a string which starts with a "/" and contains one or more segments 
-separated by "/".
+The urlpath is a string which starts with "/", "=" or "@".
 
+**A standard urlpath** starts with "/" and contains one or more segments separated by "/".
 Each segment may also be empty.
 
 Each segment may start with a colon - in this case the string of the segment defines 
@@ -44,6 +44,12 @@ in "this.context" object.
 Only the last segment can be defined as wildcard segment with an "*" character.
 If a matching url is processed the contents of the part of the url starting at the 
 wildcard segment is put into "this.context._location".
+
+**An absolute urlpath** starts with "=/" and denotes an absolute url.
+No "mountpoints" are prependet to an absolute urlpath (see "Target" below).
+
+**A null urlpath** is defined with a single "@" charakter.
+It specifies the empty string and can be used to mount modules into the root of the current module.
 
 ## HTTP Method
 
@@ -102,40 +108,21 @@ Example nunjucks template www/hello.get
 
 ## Module Flags
 
-WorkJS defines some module flags (dbCommit, dbRollback, session, logAccess, logDetail).
+WorkJS defines some module flags (dbCommit, dbRollback, session, logAccess, logDetail, formData).
 Each of these flags can be set to true or false with the characters "t" and "f".
 
-Default values for all module flags can be defined in a "config" section in package.json.
-Flags can be defined for all methods or separate for each method.
-
-Example from package.json:
-~~~JSON
-  "config": {
-    "work-flags": {
-      "dbCommit": {
-        "get": "f",
-        "post": "t"
-      },
-      "dbRollback": {
-        "get": "t",
-        "post": "f"
-      },
-      "logAccess": "t",
-      "logDetail": "t",
-      "session": "t"
-    }
-  },
-~~~
+Default values for all module flags can be defined in the WorkJS configuration option "defaultflags".
 
 In the MAP file optional module flags can be  defined as JSON string which must 
 stay in the route line (no line breaks).
-It is NOT possible to specify the request methods in route lines.
-Flag specifications in a route line override defaults from the package.json
-configuration or from a parent module.
+Flags can be defined for all methods or separate for each method.
+
+Flag specifications in a route line override defaults from configuration or from a parent module.
 
 Example:
 ~~~nohighlight
 /static/*       get     www/fileserver {"logAccess":"f", "session":"f"}
+/xxx             *      www/xxx  {"logAccess": {"get": "f", "post": "t"}}
 ~~~
 
 ## Subsite Modules

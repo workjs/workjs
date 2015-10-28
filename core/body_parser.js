@@ -16,7 +16,7 @@ var limits = {
     headerPairs: 2000
 };
 
-w.parseForm = function parseForm(next) {
+w.parseForm = function parseForm(done) {
   var that = this;
   var uploaddir = this.conf.uploaddir;
   var form = {};
@@ -48,7 +48,12 @@ w.parseForm = function parseForm(next) {
   busboy.on('error', that.replyError);
   busboy.on('finish', function() {
     for (var prop in form) { that.context[prop] = form[prop]; };
-    next();
-  }.wrap());
+    done();
+  });
   this.req.pipe(busboy);
+};
+
+w.parseFormSync = function parseFormSync(next) {
+  w.parseForm.sync(this);
+  next();
 };
