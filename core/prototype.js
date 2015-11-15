@@ -18,6 +18,10 @@ var DEVELOPMENT = Work.prototype.DEVELOPMENT
 
 Work.prototype.error = null;
 
+Work.prototype.unique = module.work.unique;
+
+Work.prototype.sleep = module.work.sleep;
+
 //finalize request, reply my body
 Work.prototype.end = function end() {
 //  if (!res.headersSent) {
@@ -40,21 +44,24 @@ Work.prototype.debug = function(s) {
   // noop fallback if no debug flag
 };
 
+Work.prototype.replyJSON = function replyJSON(obj) {
+  this.res.setHeader("Content-Type", "application/json");
+  this.res.end(JSON.stringify(obj));
+};
+
 Work.prototype.reply303 = function reply303(path) {
   this.res.writeHead(303, {"Location": path});
   this.res.end();
 };
 
 Work.prototype.reply404 = function reply404(message) {
-  var e = new Error(message);
-  e.status = 404;
-  throw(e);
+  this.error = new Error(message);
+  this.error.status = 404;
 };
 
 Work.prototype.reply500 = function reply500(message) {
-  var e = new Error(message);
-  e.status = 500;
-  throw(e);
+  this.error = new Error(message);
+  this.error.status = 500;
 };
 
 Work.prototype.replyError = function replyError(err) {

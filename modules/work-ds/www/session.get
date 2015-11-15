@@ -14,6 +14,19 @@ Sweep: {{session.sweep}} Seconds = Interval to run the sweep function to clean d
 Last Sweep: {{lastSweep}} - Next Sweep: in {{nextSweep}} Seconds
 
 <br><br>
+Local Session Cache:
+
+<pre>
+{{sessions}}
+</pre>
+
+DB Sessions:
+<pre>  
+{{db_sessions}} 
+</pre>  
+
+
+
 <table>
 <tr><th>cache
 <th>ID

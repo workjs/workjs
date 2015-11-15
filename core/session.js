@@ -4,9 +4,9 @@ var w = module.work;
 
 //local session cache
 w.sessions = {};
+w.session_counter = 0;
 
 w.session = {};
-w.session.fresh = (w.conf.session_fresh || 30) * 1000;
 w.session.update = (w.conf.session_update || 60) * 1000;
 w.session.decline = (w.conf.session_decline || 2 * 24 * 60 * 60) * 1000;
 w.session.sweep = (w.conf.session_sweep || 120 ) * 1000;
@@ -15,94 +15,95 @@ w.session.drop = Date.now(); //last sweeper run
 w.db.query("create table IF NOT EXISTS work_session " +
                        "(id bigint PRIMARY KEY, last bigint, data json);" );
   
-//persist session
-function set() {
-  if ( this.session && this.session.data ) {
-    this.tx.query("INSERT into work_session (id, last, data) VALUES (:id, :last, :data)",
-      {id:this.session.id, last:this.session.last, data:this.session.data});
-    console.log("persist session  * * * insert ENDE");
-    w.sessions[this.session.id] = {id:this.session.id, last:this.session.last, data:this.session.data};
+function Session(wrk) {
+  this.wrk = wrk;
+  this.now = wrk.id;
+  this.session_cookie = new w.dependencies.cookies(wrk.req, wrk.res, w.conf.session_secrets);
+  this.id = this.session_cookie.get( "work:sess", { signed: true } );
+  if (this.id) { //request contains a valid session_cookie
+    if (this.id > 0) { //session with data
+      if (w.sessions[this.id]) { //session in session cache
+        this.data = w.sessions[this.id].data;
+        if (w.sessions[this.id].last && (this.now - w.sessions[this.id].last > w.session.update)) {
+          this.last = this.now;
+          w.db.query("update work_session set last=:now WHERE id=:sessid",
+            {sessid:this.id, now:this.last});
+        } else this.last = w.sessions[this.id].last;
+      } else { //no data in session cache
+        this.data = w.db.one("update work_session set last=:now WHERE id=:sessid returning data",
+          {now:this.now, sessid:this.id});
+        if (this.data) { //got data from DB -> cache it
+          this.last = this.now;
+          w.sessions[this.id] = {id:this.id, last:this.last, data:this.data};
+        } else { //no data in DB ?? -> remember absence in cache, clear and recreate
+          w.sessions[this.id] = {id:this.id, last:0, data:[]};
+          this.create();
+        };
+      };
+    } else { //session without data
+      this.last = 0;
+      this.data = {};
+    };
+  } else { //no valid session_cookie, create new session
+    this.create();
   };
 };
 
-function clear() {
-  delete w.sessions[this.session_id];
-  this.new_session();
+Session.prototype.create = function create() {
+  console.log("NEW session!!");
+  if (this.now <= w.session_counter) {this.now = ++w.session_counter;}
+  else w.session_counter = this.now;
+  //mark negative for new uncached session
+  this.session_cookie.set("work:sess", -this.now, {signed: true, overwrite: true});
+  //no id in created session
+  this.id = null;
+  this.last = 0;
 };
 
-var session_counter = 0;
-
-function new_session() {
-  var sessID = this.id;
-  while (sessID <= session_counter) sessID++;
-  session_counter = sessID;
-  this.session_cookie.set("work:sess", sessID, { signed: true, overwrite: true } );
-  this.session = {"id": sessID, "last": 0, "data": null}
+//clear data from cache
+Session.prototype.clear = function clear() {
+  delete w.sessions[this.id];
+  this.create();
 };
 
-//also for middleware
-//get session from cookie, set new if none or invalid
-var get_session = function get_session(next) {
-//      console.log("* * * get_session");
-//      console.log(new Error().stack);
-      // we use: now === this.id
-      var Cookies = w.dependencies.cookies;
-      this.session_cookie = new Cookies( this.req, this.res, w.conf.session_secrets );
-      var sessID = this.session_cookie.get( "work:sess", { signed: true } );
-      console.log("sessID ==== ", sessID);
-      if (sessID) { //request contains a valid session_cookie
-        console.log("we have a sessID: ", sessID);
-        this.session_id = sessID;
-        var sessionData = w.sessions[sessID];
-        if (sessionData) { //session in session cache
-          this.session = sessionData;
-          console.log("session in session cache ****");
-          if (this.id - sessionData.last > w.session.update) { //update acctime in DB; use own DB TX
-             console.log("session Update DB - this.id - sessionData.last > w.session.update: ",
-               this.id, sessionData.last, w.session.update);
-            w.db.query("update work_session set last=:now WHERE id=:id", {id:sessID, now:this.id});
-            w.sessions[sessID].last = this.id;
-          } else {
-            console.log("session no DB Update: ", sessID);
-          };
-        } else if (sessionData === undefined) { //no data in session cache
-          console.log("session no data in session cache ***");
-          if (this.id - sessID > w.session.fresh) { //not fresh -> check in DB
-            sessionData = w.db.one("select data, last FROM work_session WHERE id=:id", {id:sessID});
-            console.log("session Data from DB: ", sessionData);
-            if (sessionData) { //got data from DB -> cache it
-              this.session = sessionData;
-              w.sessions[sessID] = sessionData;
-              if (this.id - sessionData.last > w.session.update) { //update acctime in DB
-                w.db.query("update work_session set last=:now WHERE id=:id", {id:sessID, now:this.id});
-                w.sessions[sessID].last = this.id;
-              };
-            } else { //not in DB -> renew
-              w.sessions[sessID] = null; this.new_session();
-            };
-          } else { //fresh and uncached session - i.e. no data
-            this.session = {"id": sessID, "last": this.id, "data": null};
-          }
-        } else { this.new_session(); };
-      } else { this.new_session(); };
-      next();
+//persist data in session
+Session.prototype.set = function set(key, value) {
+  if (this.id) {
+    this.data[key] = value;
+    this.last = this.now;
+    if (this.id < 0) { //new persist
+      this.id = -this.id;
+      this.session_cookie.set("work:sess", this.id, {signed: true, overwrite: true});
+      w.db.query("INSERT into work_session (id, last, data) VALUES (:id, :now, :data)",
+        {id:this.id, now:this.now, data:JSON.stringify(this.data)});
+    } else { //update session data
+      w.db.query("UPDATE work_session SET last=:now, data=:data WHERE id=:sessid", 
+        {now:this.now, data:JSON.stringify(this.data), sessid:this.id});
+    };
+    w.sessions[this.id] = {id:this.id, last:this.now, data:this.data};
+  } else {
+    this.wrk.reply500("no session available to set data");
+  };
 };
 
-w.session.new_session = new_session;
-w.session.get_session = get_session;
-w.session.set = set;
-w.session.clear = clear;
+//session middleware - fetch session from cookie and cache and DB
+//create new session if none present
+var mw = function session_mw(next) {
+  this.session = new Session(this);
+  next();
+};
 
-  w.session.sweeper = setInterval(function sweep_sessions() {
+w.session.mw = mw;
+
+w.session.sweeper = setInterval(function sweep_sessions() {
     console.log("............. sweep_sessions ................");
     var now = Date.now();
     var drop = now - w.session.decline;
     Sync(function sweep() {
       w.db.query("delete from work_session where last<:drop", {drop:drop});
       for (var id in w.sessions) {
-        if (!w.sessions[id] || w.sessions[id].last < drop) { delete w.sessions[id]; }
+        if (w.sessions[id].last < drop) { delete w.sessions[id]; }
       };
     });
     w.session.drop = now;
-  }, w.session.sweep);
-
+}, w.session.sweep);

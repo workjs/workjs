@@ -63,7 +63,6 @@ function DB() {
     };
     
     this.pg_query = function(arg0, arg1, cb) {
-        console.log("pg_query", start_arg0, arg0, arg1);
         if (start_arg0) {
           my_client.query.call(my_client, arg0, arg1, cb);
         } else {
@@ -75,7 +74,6 @@ function DB() {
     };
     
     this.pg_query_sync = function(arg0, arg1) {
-      var stack = new Error().stack;
       return(tx.pg_query.sync(tx, arg0, arg1));
     };
 
@@ -115,7 +113,6 @@ function DB() {
         var r = x.sql;
         var p = x.param;
       } else {
-        console.log("w.sqlcache: NO!");
         var parser = new sqlparser(param);
         var r = sql.replace(/:\w+/g, parser.next);
         var p = parser.param();

@@ -79,6 +79,7 @@ function route() {
   };
   
   if (n.handler) {
+    this.mapnode = n;
     n.handler.call(this);
   } else {
     //var util = require('util');

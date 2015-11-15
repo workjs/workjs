@@ -1,5 +1,5 @@
 
 /	GET	www/home
 
-/login	*	www/login
-/logout	*	www/logout
+#/login	*	www/login
+#/logout	*	www/logout

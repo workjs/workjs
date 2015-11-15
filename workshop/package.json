@@ -11,7 +11,7 @@
     "start": "node --stack_trace_limit=30 app.js"
   },
   "dependencies": {
-    "workjs": "1.0.0"
+    "workjs": "^1.0.3"
   },
   "engines": {
     "node": "^4.0.0"

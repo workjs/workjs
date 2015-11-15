@@ -12,7 +12,10 @@ module.exports.get = function get(next) {
   this.context.lastSweep = dateformat(w.session.drop, "yyyy-mm-dd/HH:MM:ss");
   this.context.nextSweep = Math.floor((w.session.sweep - now + w.session.drop)/1000);
   
+  this.context.sessions = util.inspect(w.sessions);
+  
   var sess_db = this.tx.rows("select id, data, last FROM work_session order by id desc");
+  this.context.db_sessions = util.inspect(sess_db);
   
   for (var i=0; i<sess_db.length; ++i) {
     var id = sess_db[i].id;

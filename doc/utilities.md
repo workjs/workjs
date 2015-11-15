@@ -1,9 +1,20 @@
 <h1>WorkJS - Utilities</h1>
 
-### this.conf
 ### module.work.conf
+### this.conf
 
 The WorkJS configuration.
+
+### module.work.unique()
+### this.unique()
+create unique ID from Date.now
+
+### module.work.sleep(ms)
+### this.sleep(ms)
+syncho sleep
+
+### module.work.lastID
+last unique ID created
 
 ### this.end()
 finalize request, reply my body.

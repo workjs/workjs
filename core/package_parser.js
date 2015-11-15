@@ -33,15 +33,15 @@ function parse() {
     for (var pkgname in w.packages) {
       var dirname = w.packages[pkgname].dirname;
       console.log('DEVELOPMENT ---> Watch in '+dirname);
-      var ignorepath = dirname+"/node_modules|"
-      + dirname+"/LOG|"
-      + dirname+"/.git|"
-      + dirname+"/core";
+      var ignorepath = w.rootdir+"/node_modules|"
+      + w.rootdir+"/LOG|"
+      + w.rootdir+"/.git|"
+      + w.rootdir+"/core";
       var re = new RegExp(ignorepath);
       w.packages[pkgname].watcher = chokidar
       .watch('.', {cwd:dirname, ignored:re, ignoreInitial:true})
       .on('add', function(event, path) { reload(); })
-      .on('change', function(path) { reload(); })
+      .on('change', function(path) { console.log("change ....", path); reload(); })
       .on('unlink', function(path) { reload(); });
     };
   };
@@ -62,9 +62,7 @@ function MAPnode(){
     this.pkg = null;
 };
 
-function add_to_route_map(urlpath, verb, target, flags, pkg) {
-//  console.log("add_to_route_map ....", verb, urlpath, target, flags);
-  
+function add_to_route_map(urlpath, verb, target, flags, pkg, urlprefix) {
   var n = w.map[verb];
   var p = urlpath.split('/');
   
@@ -112,6 +110,7 @@ function add_to_route_map(urlpath, verb, target, flags, pkg) {
   n.urlpath = urlpath;
   n.flags = flags;
   n.pkg = pkg;
+  n.moduleprefix = urlprefix;
 };
 
 //parse packages and modules
@@ -183,24 +182,22 @@ function pass1(verb, dirname, urlprefix, preflags) {
       };
       pass1(verb, pkgdirname, urlpath, rflags);
     } else {
-      add_to_route_map(urlpath, verb, target, rflags, pkg);
+      add_to_route_map(urlpath, verb, target, rflags, pkg, urlprefix);
     };
   });
 };
 
 function build_handler(n) {
   var util = require('util');
-//  console.log("**** build_handler " +n.verb+": "+n.urlpath+" -> "+n.target);
-//  console.log(util.inspect(n.flags, {depth:2}));
   if (n.target) {
     var has_DB = false;
     var h = []; //list of functions (modules, controller, view) for this handler
-    if (n.flags["logAccess"]) { h.push(w.logger.access); }
-    if (n.flags["logDetail"]) { h.push(w.logger.debug); }
+    if (n.flags["access"]) { h.push(w.logger.access); }
+    if (n.flags["debug"]) { h.push(w.logger.debug); }
     if (n.flags["formData"]) { h.push(w.parseFormSync); }
     if (n.flags["dbCommit"]) { h.push(w.dbm.commit); }
     if (n.flags["dbRollback"]) { h.push(w.dbm.rollback); }
-    if (n.flags["session"]) { h.push(w.session.get_session); }
+    if (n.flags["session"]) { h.push(w.session.mw); }
     //if null target -> we are finished
     if (n.target === '=') {
       n.handler = null;
@@ -230,7 +227,7 @@ function build_handler(n) {
           var v = n.pkg.templating.compile(v_path);
           if (v) h.push(function render_template(next) {
             this.body = v.render.sync(v, this.context);
-            this.end(); //shorcut we are last
+            this.end(); //shortcut we are last
             // next();
           });
         } catch (e) {
@@ -248,13 +245,10 @@ function build_handler(n) {
 };
 
 function compose(i, mwstack){
-//  console.log("+++++ compose mwstack:", i, mwstack, mwstack[i]);
   if (i < mwstack.length) {
     var f = mwstack[i];
     var g = compose(i+1, mwstack);
     return function(){
-//      console.log("hf", f);
-//      console.log("hg", g);
       f.call(this, g.bind(this));
     };
   } else {
@@ -263,5 +257,6 @@ function compose(i, mwstack){
     };
   };
 };
+
 
 parse();

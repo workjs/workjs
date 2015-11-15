@@ -2,15 +2,15 @@
 
 WorkJS provides functionality to log requests, debug information and measure execution time.
 
-### Module Flags: logAccess, logDetail
+### Module Flags: access, debug
 
 Some of the logging functionality is controlled with module flags.
 
-If the "logAccess" flag for a route is true, 
+If the "access" flag for a route is true, 
 a line is written into an access log file for each reply sent.
 The access log file is placed in the location configured and it's name is the current date.
 
-If the "logDetail" flag for a route is true,
+If the "debug" flag for a route is true,
 debug lines are written into a debug log file.
 The debug log file is placed in the location configured and it's name is the current date.
 If debug lines are written, a line is written when the request arrives, 

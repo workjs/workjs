@@ -8,6 +8,8 @@ var w = Module.prototype.work = {};
 
 w.dependencies = {};
 w.dependencies.cookies = module.require('cookies');
+w.dependencies.bcrypt = module.require('bcrypt');
+w.dependencies.syncho = Sync;
 
 //work_require for autoreload in development mode defaults to require
 Module.prototype.work_require = Module.prototype.require;
@@ -21,6 +23,10 @@ w.unique = function unique() {
   while (u <= w.lastID) u++;
   w.lastID = u;
   return u;
+};
+
+w.sleep = function sleep(ms) {
+  Sync.sleep(ms);
 };
 
 module.exports = function bootstrap(conf) {
@@ -45,11 +51,11 @@ for (var i = 0; i<w.conf.verbs.length; ++i)
 
 //define default flags
 w.flags = {};
-w.flags.get = { "logAccess": true, "logDetail": true, "formData": false,
+w.flags.get = { "access": true, "debug": true, "formData": false,
   "dbCommit": false, "dbRollback": true, "session": true };
-w.flags.post = { "logAccess": true, "logDetail": true, "formData": true,
+w.flags.post = { "access": true, "debug": true, "formData": true,
   "dbCommit": true, "dbRollback": false, "session": true };
-w.defaultflags = w.conf.defaultflags || { "logAccess": true, "logDetail": true, "formData": true,
+w.defaultflags = w.conf.defaultflags || { "access": true, "debug": true, "formData": true,
   "dbCommit": true, "dbRollback": false, "session": true };
 
 w.logger = require("./logger.js")({

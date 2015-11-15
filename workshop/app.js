@@ -27,9 +27,6 @@ conf.uploaddir = conf.rootdir + "/TMP";
 
 conf.session_secrets = ["Top Secret"];
 
-//assume session to be new
-conf.session_fresh = 30;
-
 //update session in DB
 conf.session_update = 60;
 

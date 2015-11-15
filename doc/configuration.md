@@ -27,7 +27,6 @@ conf.uploaddir = conf.rootdir + "/TMP";
 
 conf.session_secrets = ["Top Secret"];
 
-conf.session_fresh = 30;
 conf.session_update = 60;
 conf.session_decline = 2 * 24 * 60 * 60;
 conf.session_sweep = 120;
@@ -60,9 +59,6 @@ Requests are queued if the application requires more than db_poolsize connection
 * conf.uploaddir: location of files which have been uploaded.
 
 * conf.session_secrets: secrets used to sign session cookies.
-
-* conf.session_fresh: time in seconds while a session without data in the session cache is 
-assumed to have no persistent data stored in the database.
 
 * conf.session_update: time in seconds after which the session access timestamp will
 be updated in the database.
