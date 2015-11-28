@@ -42,6 +42,10 @@ Perform query with query string sql and parameters param and return the array of
 ### this.tx.one(sql[, param])
 Perform query with query string sql and parameters param and return first result row.
 
+### this.tx.only(sql[, param])
+Perform query with query string sql and parameters param and return a single column value from 
+first result row.
+
 ### this.tx.query(sql, param)
 Perform query with query string sql and parameters param and return result data structure.
 
@@ -51,5 +55,6 @@ Perform query with query string sql and parameters param and call function fn wi
 The same functions are also available at module.work.db running in separate transactions: 
 ### module.work.db.rows(sql[, param])
 ### module.work.db.one(sql[, param])
+### module.work.db.only(sql[, param])
 ### module.work.db.query(sql, param)
 ### module.work.db.each(sql, param, fn)

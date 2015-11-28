@@ -1,19 +1,19 @@
 <h1>WorkJS - Utilities</h1>
 
-### module.work.conf
+### work.conf
 ### this.conf
 
 The WorkJS configuration.
 
-### module.work.unique()
+### work.unique()
 ### this.unique()
 create unique ID from Date.now
 
-### module.work.sleep(ms)
+### work.sleep(ms)
 ### this.sleep(ms)
 syncho sleep
 
-### module.work.lastID
+### work.lastID
 last unique ID created
 
 ### this.end()
@@ -48,3 +48,13 @@ Used to deliver static files with the /static/* wildcard route.
 ### this.marked(md)
 Uses [marked](https://github.com/chjj/marked) to convert markdown "md" to html.
 Used to render this dokumentation with the www/docserver handler.
+
+### work.randomStringAsBase64Url(size)
+### this.randomStringAsBase64Url(size)
+http://stackoverflow.com/questions/8855687/secure-random-token-in-node-js/25690754#25690754<br>
+Generate a random Base64 encoded string.<br>
+Size is the unencoded size, therefore the returned string will be longer.
+
+### work.dependencies
+WorkJS imports several node and external modules and attaches them to the work object:
+crypto cookies bcrypt base64url syncho

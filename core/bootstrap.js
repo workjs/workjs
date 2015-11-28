@@ -7,8 +7,13 @@ var Module = require('module');
 var w = Module.prototype.work = {};
 
 w.dependencies = {};
+w.caches = {};
+
+w.dependencies.crypto = module.require('crypto');
+
 w.dependencies.cookies = module.require('cookies');
 w.dependencies.bcrypt = module.require('bcrypt');
+w.dependencies.base64url = module.require('base64url');
 w.dependencies.syncho = Sync;
 
 //work_require for autoreload in development mode defaults to require
@@ -27,6 +32,12 @@ w.unique = function unique() {
 
 w.sleep = function sleep(ms) {
   Sync.sleep(ms);
+};
+
+//http://stackoverflow.com/questions/8855687/secure-random-token-in-node-js/25690754#25690754
+//size is the unencoded size, therefore the returned string will be longer
+w.randomStringAsBase64Url = function randomStringAsBase64Url(size) {
+  return w.dependencies.base64url(w.dependencies.crypto.randomBytes(size));
 };
 
 module.exports = function bootstrap(conf) {
@@ -52,16 +63,16 @@ for (var i = 0; i<w.conf.verbs.length; ++i)
 //define default flags
 w.flags = {};
 w.flags.get = { "access": true, "debug": true, "formData": false,
-  "dbCommit": false, "dbRollback": true, "session": true };
+  "dbCommit": false, "dbRollback": true, "session": true, "auth": true, "user": true };
 w.flags.post = { "access": true, "debug": true, "formData": true,
-  "dbCommit": true, "dbRollback": false, "session": true };
+  "dbCommit": true, "dbRollback": false, "session": true, "auth": true, "user": true };
 w.defaultflags = w.conf.defaultflags || { "access": true, "debug": true, "formData": true,
-  "dbCommit": true, "dbRollback": false, "session": true };
+  "dbCommit": true, "dbRollback": false, "session": true, "auth": false, "user": true };
 
 w.logger = require("./logger.js")({
-  alogdir:w.conf.access_logdir,
-  dlogdir:w.conf.debug_logdir,
-  mlogdir:w.conf.message_logdir
+  alogdir:w.conf.log_access,
+  dlogdir:w.conf.log_debug,
+  mlogdir:w.conf.log_message
 });
 
 //fallback log function to be used if not in any Work (request) context
@@ -86,6 +97,12 @@ Sync(function setup() {
 
   //load session subsystem
   require('./session.js');
+  
+  //load user+auth subsystem
+  require('./user.js');
+  
+  //load email subsystem
+  require('./smtp.js');
 
 try { fs.mkdirSync(w.conf.uploaddir); } catch (e) { };
 

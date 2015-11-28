@@ -1,0 +1,22 @@
+{% extends "master.html" %}
+
+{% block content %}
+<style>
+#register label {display:inline-block;width:5em;text-align:right;}
+#register input {margin:0.5em;width:15em;}
+#register input[type="submit"] {margin:0.5em;width:10em;}
+</style>
+
+<h1>WorkJS Registration</h1>
+
+{% if mode == 'expired' %}<p>This key is not valid or expired - take a new one.</p>{% endif %}
+
+<p>Here you can request a registration key.<br>
+We will send you an email which enables you to finish WorkJS registration.</p>
+
+<form id="register" method="post">
+<p title="Used as username to log in and to recover a forgotten password.">
+  <label for="email">Email:</label><input type="email" required name="email">
+<input type="submit" value="Request"></p>
+</form>
+{% endblock %}

@@ -32,15 +32,19 @@ w.parseForm = function parseForm(done) {
     md5.on('finish', function() {
       var f = { path:path, filename:filename, encoding:encoding, mimetype:mimetype, 
                 size:size, md5:md5.read() };
-      if (form.hasOwnProperty(fieldname)) { form[fieldname].push(f); }
-      else { form[fieldname] = [f]; };
+      if (form.hasOwnProperty(fieldname)) { 
+        if (form[fieldname] instanceof Array) { form[fieldname].push(f); }
+        else form[fieldname] = [form[fieldname], f]; }
+      else { form[fieldname] = f; };
     });
     file.pipe(fs.createWriteStream(path));
     file.pipe(md5);
   });
   busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated) {
-    if (form.hasOwnProperty(fieldname)){ form[fieldname].push(val); }
-    else { form[fieldname] = [val]; };
+    if (form.hasOwnProperty(fieldname)) {
+      if (form[fieldname] instanceof Array) { form[fieldname].push(val); }
+      else form[fieldname] = [form[fieldname], val]; }
+    else { form[fieldname] = val; };
   });
   busboy.on('partsLimit', function() { that.reply500("parseForm partsLimit"); });
   busboy.on('filesLimit', function() { that.reply500("parseForm filesLimit"); });

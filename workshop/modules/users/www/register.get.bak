@@ -1,0 +1,28 @@
+{% extends "master.html" %}
+
+{% block content %}
+<style>
+#register p {width:20em;text-align:right;margin:0;}
+#register label {display:inline-block;width:5em;text-align:right;}
+#register input {margin:0.5em;width:15em;}
+#register #terms>input {width:1em;}
+#register button {margin:0.5em;}
+</style>
+
+<form id="register" method="post">
+<p title="Used as username to log in and to recover a forgotten password.">
+  <label for="email">Email:</label><input type="email" required name="email"></p>
+<p>
+  <label for="nick">Nickname:</label>
+  <input type="text" required pattern=".{3,}" name="nick"
+  title="At least 3 characters. Visible to other users. Not unique."></p>
+<p><label for="pw">Password:</label>
+  <input type="password" required pattern=".{8,}" name="pw" onchange="form.pw2.pattern = this.value;"
+  title="Eight or more characters"></p>
+<p><label for="pw2">Confirm Password:</label>
+  <input type="password" required pattern=".{8,}" name="pw2"
+  title="Please enter the same Password as above."></p>
+<p id="terms"><input type="checkbox" required name="terms">I accept the <u>Terms and Conditions</u></p>
+<p><input type="submit" value="Register"></p>
+</form>
+{% endblock %}

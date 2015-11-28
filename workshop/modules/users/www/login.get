@@ -1,0 +1,18 @@
+{% extends "master.html" %}
+
+{% block content %}
+<style>
+#auth div {width:20em;text-align:right;}
+#auth label {display:inline-block;width:5em;text-align:right;}
+#auth input {margin:0.5em;width:15em;}
+#auth button {margin:0.5em;}
+</style>
+
+<h1>Login</h1>
+
+<form id="auth" method="post">
+<div><label for="email">email:</label><input type="email" name="email"></div>
+<div><label for="pw">password:</label><input type="password" name="pw"></div>
+<div><button>Login</div>
+</form>
+{% endblock %}

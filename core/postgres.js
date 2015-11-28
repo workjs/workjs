@@ -131,8 +131,14 @@ function DB() {
     
     this.one = function one(sql, param) {
       return(this.query(sql, param).rows[0]);
-    };    
-
+    };
+    
+    this.only = function only(sql, param) {
+      var one = this.query(sql, param).rows[0];
+      if (one) { return(one[Object.keys(one)[0]]); }
+      else return(null);
+    };
+    
     this.each = function each(sql, param, fn) {
       var r = this.query(sql, param).rows;
       for (var i = 0; i < r.length; i++) { fn(r[i]); };
@@ -154,6 +160,12 @@ function DB() {
   
   this.one = function one(sql, param) {
     return(dbm.query(sql, param).rows[0]);
+  };
+  
+  this.only = function only(sql, param) {
+    var one = dbm.query(sql, param).rows[0];
+    if (one) { return(one[Object.keys(one)[0]]); }
+    else return(null);
   };
   
   this.each = function each(sql, param, fn) {

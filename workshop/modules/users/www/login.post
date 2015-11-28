@@ -1,0 +1,7 @@
+{% extends "master.html" %}
+
+{% block content %}
+<pre style="background:grey;min-height:100px">
+{{ oo }}
+</pre>
+{% endblock %}

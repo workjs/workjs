@@ -36,15 +36,15 @@ Example:
 /base/url?x=a&x=8&y=2
 ~~~
 
-this will result in this.context = {x:['a', '8'], y:['2']}
+this will result in this.context = {x:['a', '8'], y:'2'}
 
-As all parameters can be given multiple times, the results are returned as arrays.
+Parameters given multiple times are returned as arrays.
 
 ### form fields x-www-form-urlencoded or multipart/form-data
 
 Form fields are fetched if the flag "formData" for a route is set true.
-As with query string parameters, form fields are returned as arrays 
-and put into this.context
+As with query string parameters, form fields are put into this.context
+and returned as arrays if present multiple times.
 
 ### url segments
 

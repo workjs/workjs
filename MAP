@@ -1,8 +1,9 @@
-/static/*	get	www/fileserver {"access":"f", "session":"f"}
+/static/*	get	www/fileserver {"access":"f", "session":"f", "auth":"f"}
 
-/doc/*	get	www/docserver	{"session":"f", "debug":"t"}
+#/doc/*	get	www/docserver	{"session":"f", "auth":"f", "debug":"t"}
+/doc	get	:./modules/docserver	{"session":"f", "auth":"f", "debug":"f"}
 
-/ds	*	:./modules/work-ds	{"debug":"t", "dbCommit":"f"}
+/ds	*	:./modules/work-ds	{"debug":"t", "dbCommit":"f", "auth":"t"}
 
 /fs	*	:./modules/work-store
 

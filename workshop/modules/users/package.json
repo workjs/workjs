@@ -1,0 +1,12 @@
+{
+  "name": "users",
+  "version": "0.0.1",
+  "private": true,
+  "description": "WorkJS User Management",
+  "keywords": [
+    "workjs", "authentication"
+  ],
+  "engines": { "node": "^4.0.0" },
+  "author": "Franz Penz",
+  "license": "MIT"
+}

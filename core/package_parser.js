@@ -171,10 +171,14 @@ function pass1(verb, dirname, urlprefix, preflags) {
       return;
     };
 
-    if (target[0] === ":") {
+    if (target[0] === ":") { //a module mounted is here
       var pkgname = target.substring(1);
+      if (pkgname[0] === "/") { //absolute path start to resolve from core dir
+        var basedir = w.coredir;
+        var pkgname = "." + pkgname;
+      } else var basedir = pkg.dirname;
       try {
-        pkgdirname = path.dirname(resolve.sync(pkgname, { basedir: pkg.dirname }));
+        pkgdirname = path.dirname(resolve.sync(pkgname, { basedir: basedir }));
       } catch (e) {
         w.log('INVALID package ref in: ' + line);
         w.log('ERROR parsing mapfile "' + mapfile + '": '+ e.message);
@@ -192,12 +196,17 @@ function build_handler(n) {
   if (n.target) {
     var has_DB = false;
     var h = []; //list of functions (modules, controller, view) for this handler
-    if (n.flags["access"]) { h.push(w.logger.access); }
-    if (n.flags["debug"]) { h.push(w.logger.debug); }
-    if (n.flags["formData"]) { h.push(w.parseFormSync); }
-    if (n.flags["dbCommit"]) { h.push(w.dbm.commit); }
-    if (n.flags["dbRollback"]) { h.push(w.dbm.rollback); }
-    if (n.flags["session"]) { h.push(w.session.mw); }
+    if (n.flags["access"]) h.push(w.logger.access);
+    if (n.flags["debug"]) h.push(w.logger.debug);
+    if (n.flags["formData"]) h.push(w.parseFormSync);
+    if (n.flags["dbCommit"]) h.push(w.dbm.commit);
+    if (n.flags["dbRollback"]) h.push(w.dbm.rollback);
+    if (n.flags["dbCommit"] && n.flags["dbRollback"])
+      w.log('WARNING dbRollback AND dbCommit in ' + n.verb+' '+n.urlpath);
+    if (n.flags["session"]) h.push(w.session.mw);
+    if (n.flags["auth"]) if (n.flags["session"]) h.push(w.auth.mw) 
+      else { h.push(w.session.mw); h.push(w.auth.mw); }
+
     //if null target -> we are finished
     if (n.target === '=') {
       n.handler = null;
@@ -206,7 +215,9 @@ function build_handler(n) {
       var v_path = n.pkg.dirname+'/'+n.target+"."+n.verb;
 
       if (fs.existsSync(c_path)) {
+        console.log("look for controller: ", c_path);
         try { var c = module.work_require(c_path)[n.verb];
+          if (c) console.log("found!");
           if (c) h.push(function handler(next) {
             try {
               c.call(this, next);
@@ -237,7 +248,11 @@ function build_handler(n) {
       };
       
       //add route only if c or v
-      if (c || v) { n.handler = compose(0, h); } else { n.handler = null; }
+      if (c || v) { n.handler = compose(0, h); }
+      else { 
+        console.log("#### NO controller and NO view found for: "+n.verb+' '+n.urlpath+' -> '+n.taget);
+        n.handler = function(){ if (!this.res.headersSent) { this.end(); }; };
+      };
     };
   };
   

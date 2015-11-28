@@ -1,0 +1,15 @@
+{% extends "master.html" %}
+
+{% block content %}
+<style>table,th,td {border:1px solid;padding:4px;border-collapse: collapse;}</style>
+
+<h1>WorkJS Users</h1>
+
+<table>
+<tr><th>user_id<th>Email<th>Nick<th>Creation</tr>
+{% for u in users  %}
+<tr><td>{{ u.user_id }}<td>{{ u.email }}<td>{{ u.nick }}<td>{{ u.creation }}</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

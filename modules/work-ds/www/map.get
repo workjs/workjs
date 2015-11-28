@@ -6,20 +6,30 @@
 <table>
 <tr><th>Urlpath
 <th>Verb
+<th>Location
 <th>Target
 <th>Package
-<th>Location
 <th>varname
 <th>Flags
 </tr>
 {% for path in r  %}
 {% for verb in verbs %}{% if ro[path][verb].n %}
 <tr><td><a href="{{path}}">{{path}}</a>
-<td>{{verb}}
-<td{%if not ro[path][verb].n.handler %} style="color:red"{% endif %}>{{ro[path][verb].n.target}}
-<td>{{ro[path][verb].n.pkg.name}}
+
+<td>{%if ro[path][verb].view %}<a href="plain/{{ro[path][verb].view}}">{{verb}}</a>
+{% else %}{{verb}}{% endif %}
+
 <td>{{ro[path][verb].n.pkg.dirname}}
+
+<td{%if not ro[path][verb].n.handler %} style="color:red"{% endif %}>
+{%if ro[path][verb].controller %}<a href="plain/{{ro[path][verb].controller}}">
+{{ro[path][verb].n.target}}
+{% else %}{{ro[path][verb].n.target}}{% endif %}
+
+<td>{{ro[path][verb].n.pkg.name}}
+
 <td>{{ro[path][verb].n.varname}}
+
 <td>{{ro[path][verb].flags}}
 </tr>
 {% endif %}{% endfor %}

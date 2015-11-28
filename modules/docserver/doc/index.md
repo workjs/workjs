@@ -1,6 +1,7 @@
 # WorkJS Quick Start
 
 WorkJS is a Web Application Framework based on [node.js](https://nodejs.org/)
+It uses html5 features and does *not* care to support old web clients.
 
 ## Objectives
 
@@ -16,7 +17,10 @@ WorkJS is a Web Application Framework based on [node.js](https://nodejs.org/)
 
 You need a working node.js installation and npm to install WorkJS.
 
-You also need a PostgreSQL database server (9.3 or newer) with a new database.
+You also need a PostgreSQL database server (9.5 or newer :-) with a new database.
+We use PostgreSQL 9.5 as it now provides features like "INSERT ON CONFLICT DO UPDATE" and "CREATE INDEX IF NOT EXISTS".
+PostgreSQL installation: http://www.postgresql.org/download/linux/
+How to install PostgreSQL 9.5 on Ubuntu/Debian/Linux Mint: http://raonyguimaraes.com/installing-postgresql-9-5-on-linux/
 
 For a quick start install the WorkJS package and create a boilerplate application.
 Edit app.js to match your PostgreSQL server and database name.

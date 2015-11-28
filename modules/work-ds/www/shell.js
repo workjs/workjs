@@ -5,9 +5,9 @@ module.exports.post = function post(next) {
   try {
   var r = function(str){
     return(eval(str));
-  }.call(this,this.context.code[0]);
+  }.call(this,this.context.code);
     this.context.r = util.inspect(r);
-  } catch (e) { this.context.r = e };
+  } catch (e) { this.context.r = e + "\n\n" + e.stack};
   next();
 };
 

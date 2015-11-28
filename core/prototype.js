@@ -27,6 +27,7 @@ Work.prototype.end = function end() {
 //  if (!res.headersSent) {
 //    if (typeof this.body !== 'undefined') {
       this.res.setHeader("Content-Type", "text/html; charset=utf-8");
+      if (!this.body) this.body="";
       this.res.setHeader("Content-Length", Buffer.byteLength(this.body));
       this.res.write(this.body);
       this.res.end();
@@ -84,19 +85,6 @@ Work.prototype.sendFileSync = function sendFileSync(root, path) {
 Work.prototype.parseForm = body_parser.parseForm;
 Work.prototype.parseFormSync = body_parser.parseFormSync;
 
-Work.prototype.set_session = function set_session() {
-  module.work.session.set.apply(this, arguments);
-};
-
-Work.prototype.clear_session = function clear_session() {
-  module.work.session.clear.apply(this, arguments);
-};
-
-Work.prototype.new_session = function new_session() {
-  module.work.session.new_session.apply(this, arguments);
-};
-
-
 var marked = require('marked');
 var hljs = require('highlight.js');
 
@@ -121,4 +109,6 @@ marked.setOptions({
 Work.prototype.marked = function markdown(md) {
   return marked(md);
 };
+
+Work.prototype.randomStringAsBase64Url = module.work.randomStringAsBase64Url;
 

@@ -30,10 +30,11 @@ function Session(wrk) {
             {sessid:this.id, now:this.last});
         } else this.last = w.sessions[this.id].last;
       } else { //no data in session cache
-        this.data = w.db.one("update work_session set last=:now WHERE id=:sessid returning data",
+        var data = w.db.one("update work_session set last=:now WHERE id=:sessid returning data",
           {now:this.now, sessid:this.id});
-        if (this.data) { //got data from DB -> cache it
+        if (data) { //got data from DB -> cache it
           this.last = this.now;
+          this.data = data.data;
           w.sessions[this.id] = {id:this.id, last:this.last, data:this.data};
         } else { //no data in DB ?? -> remember absence in cache, clear and recreate
           w.sessions[this.id] = {id:this.id, last:0, data:[]};
@@ -88,12 +89,18 @@ Session.prototype.set = function set(key, value) {
 
 //session middleware - fetch session from cookie and cache and DB
 //create new session if none present
-var mw = function session_mw(next) {
+w.session.mw = function session_mw(next) {
   this.session = new Session(this);
   next();
 };
 
-w.session.mw = mw;
+//clear session by data value
+w.session.clear = function clear(path, value) {
+  var id = w.db.one("DELETE FROM work_session WHERE data#>>:path=:value returning id",
+    {path:path, value:value});
+  //clear from session cache
+  w.sessions[id.id] = {id:id.id, last:0, data:[]};
+};
 
 w.session.sweeper = setInterval(function sweep_sessions() {
     console.log("............. sweep_sessions ................");

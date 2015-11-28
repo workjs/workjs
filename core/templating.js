@@ -12,7 +12,7 @@ module.exports = function(opts) {
 //  var noCache = true;
   
   var loader = new nunjucks.FileSystemLoader(searchpaths, {noCache:false, watch:false});
-  console.log("loader .......", loader.searchPaths);
+//  console.log("loader .......", loader.searchPaths);
   
   var env = new nunjucks.Environment(
     loader,
@@ -21,12 +21,12 @@ module.exports = function(opts) {
   
   function compile(name) {
     console.log("compile template ....", name);
-    console.log("loader ..", loader.cache);
+//    console.log("loader ..", loader.cache);
     loader.emit('update', name);
-    console.log("loader .... path.relative: ");
-    console.log("name:", name);
-    console.log("searchpaths:", searchpaths);
-    console.log("path.relative:", path.relative(searchpaths[0], name));
+//    console.log("loader .... path.relative: ");
+//    console.log("name:", name);
+//    console.log("searchpaths:", searchpaths);
+//    console.log("path.relative:", path.relative(searchpaths[0], name));
     return env.getTemplate(name, true);
 /*    return env.getTemplate(
       path.relative(searchpaths[0], name),

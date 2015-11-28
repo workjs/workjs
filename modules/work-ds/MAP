@@ -10,3 +10,5 @@
 /work	get	www/work
 /cookies *	www/cookies
 /session get	www/session
+
+/plain/* get	www/plain

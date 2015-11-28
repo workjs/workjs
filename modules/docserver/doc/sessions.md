@@ -60,6 +60,10 @@ Does not delete sessions from the database - the sweeper will do.
 You can call this to e.g. log an user out.
 But you could also keep the session and only delete the session data.
 
+### work.session.clear(path, value)
+Use postgreSQL JSON path to select and delete session from database and from session cache.
+This is to e.g. kick a user.
+
 ### work.sessions
 Session cache in Memory.
 

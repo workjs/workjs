@@ -48,7 +48,7 @@ wildcard segment is put into "this.context._location".
 **An absolute urlpath** starts with "=/" and denotes an absolute url.
 No "mountpoints" are prependet to an absolute urlpath (see "Target" below).
 
-**A null urlpath** is defined with a single "@" charakter.
+**A null urlpath** is defined with a single "@" character.
 It specifies the empty string and can be used to mount modules into the root of the current module.
 
 ## HTTP Method

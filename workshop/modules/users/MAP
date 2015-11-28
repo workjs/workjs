@@ -1,0 +1,11 @@
+
+=/register	get	www/register
+=/register	post	www/register
+
+=/auth/confirmation/*	get	www/confirmation
+=/auth/confirmation 	post	www/confirmation
+
+=/login		*	www/login
+=/logout	*	www/logout
+
+/		get	www/list

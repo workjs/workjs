@@ -1,5 +1,9 @@
 
 /	GET	www/home
 
+/users	*	:./modules/users
+
+#/admin/users	* :/modules/users	{"debug":"t", "auth":"t"}
+
 #/login	*	www/login
 #/logout	*	www/logout

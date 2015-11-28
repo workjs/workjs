@@ -1,0 +1,30 @@
+{% extends "master.html" %}
+
+{% block content %}
+<style>
+#register p {width:20em;text-align:right;margin:0;}
+#register input {margin:0.5em;width:15em;}
+#register #terms>input {width:1em;}
+
+
+</style>
+
+<h1>WorkJS Registration</h1>
+
+<form id="register" method="post" action="/auth/confirmation">
+<input type="text" value="{{_location}}" name="randomurl">
+<p title="Used as username to log in and to recover a forgotten password.">
+  <label for="email">Email:</label><input type="email" disabled value="{{email}}"></p>
+<p><label for="nick">Nickname:</label>
+  <input type="text" required pattern=".{3,}" name="nick"
+  title="At least 3 characters. Visible to other users. Not unique."></p>
+<p><label for="pw">Password:</label>
+  <input type="password" required pattern=".{8,}" name="pw" title="Eight or more characters"></p>
+<p id="terms"><input type="checkbox" required name="terms">I accept the <u>Terms and Conditions</u></p>
+<p><input type="submit" value="Register"></p>
+</form>
+
+<pre>
+{{oo}}
+</pre>
+{% endblock %}

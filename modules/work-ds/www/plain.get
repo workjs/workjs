@@ -1,0 +1,11 @@
+{% extends "master.html" %}
+
+{% block head %}
+<style>pre {background:#ffbbff;}</style>
+{% endblock %}
+
+{% block content %}
+<pre>
+{{ plain|safe }}
+</pre>
+{% endblock %}

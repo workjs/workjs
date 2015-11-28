@@ -1,0 +1,5 @@
+{% extends "master.html" %}
+
+{% block content %}
+To complete registration please check your mailbox!
+{% endblock %}
