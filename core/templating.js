@@ -20,7 +20,7 @@ module.exports = function(opts) {
   );
   
   function compile(name) {
-    console.log("compile template ....", name);
+///    console.log("compile template ....", name);
 //    console.log("loader ..", loader.cache);
     loader.emit('update', name);
 //    console.log("loader .... path.relative: ");

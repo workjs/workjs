@@ -63,6 +63,7 @@ function MAPnode(){
 };
 
 function add_to_route_map(urlpath, verb, target, flags, pkg, urlprefix) {
+//  console.log(">>>", pkg.name, verb, urlpath, target, urlprefix);
   var n = w.map[verb];
   var p = urlpath.split('/');
   
@@ -74,23 +75,32 @@ function add_to_route_map(urlpath, verb, target, flags, pkg, urlprefix) {
         w.log("ERROR [package_parser.add_to_route_map] invalid wildcard route: "+verb+":"+urlpath);
         return
       };
+      if (Object.keys(n.branches).length !== 0) {
+        w.log("ERROR [package_parser.add_to_route_map] invalid wildcard route, branch already taken: "+pkg.name+":"+verb+":"+urlpath);
+        return
+      };
       n = n.branches["*"] = new MAPnode();
       n.varname = '_location';
       break
     };
     
     if (segment[0] === ':') { //this segment defines a variable
-      if (':' in n.branches) { //varname again - must be same
+      if (n.branches[':']) { //varname again - must be same
         if (n.varname && n.varname==segment.substr(1)) { //same var again -> ok
           n = n.branches[':'];
           continue
-        };
-        //do not allow different vars with same prefix
-        w.log("ERROR [package_parser.add_to_route_map] different route parameter for same prefix: "+
+        } else {
+          //do not allow different vars with same prefix
+          w.log("ERROR [package_parser.add_to_route_map] different route parameter for same prefix: "+
             verb+":"+urlpath+" -- "+segment+" -- "+n.varname);
-        w.log("WARN  [package_parser.add_to_route_map] dropping route: "+verb+":"+urlpath);
+          w.log("WARN  [package_parser.add_to_route_map] dropping route: "+verb+":"+urlpath);
+          return
+        };
+      };
+      if (Object.keys(n.branches).length !== 0) {
+        w.log("ERROR [package_parser.add_to_route_map] invalid wildcard route, branch already taken: "+pkg.name+":"+verb+":"+urlpath);
         return
-      }
+      };
       //new variable
       n.varname = segment.substr(1);
       n = n.branches[':'] = new MAPnode();
@@ -115,7 +125,7 @@ function add_to_route_map(urlpath, verb, target, flags, pkg, urlprefix) {
 
 //parse packages and modules
 function pass1(verb, dirname, urlprefix, preflags) {
-  console.log('PASS1 in '+dirname, verb, preflags);
+  //console.log('PASS1 in '+dirname, verb, preflags);
   //get package information
   var package_json = path.join(dirname, 'package.json');
   var pkg = JSON.parse(fs.readFileSync(package_json).toString());
@@ -171,7 +181,7 @@ function pass1(verb, dirname, urlprefix, preflags) {
       return;
     };
 
-    if (target[0] === ":") { //a module mounted is here
+    if (target[0] === ":") { //module mounted here
       var pkgname = target.substring(1);
       if (pkgname[0] === "/") { //absolute path start to resolve from core dir
         var basedir = w.coredir;
@@ -180,7 +190,7 @@ function pass1(verb, dirname, urlprefix, preflags) {
       try {
         pkgdirname = path.dirname(resolve.sync(pkgname, { basedir: basedir }));
       } catch (e) {
-        w.log('INVALID package ref in: ' + line);
+        w.log('INVALID package ref in: ' + dirname + " >> " + line);
         w.log('ERROR parsing mapfile "' + mapfile + '": '+ e.message);
         return;
       };
@@ -206,6 +216,7 @@ function build_handler(n) {
     if (n.flags["session"]) h.push(w.session.mw);
     if (n.flags["auth"]) if (n.flags["session"]) h.push(w.auth.mw) 
       else { h.push(w.session.mw); h.push(w.auth.mw); }
+    if (n.flags["user"]) h.push(w.auth.usermw);
 
     //if null target -> we are finished
     if (n.target === '=') {
@@ -215,9 +226,9 @@ function build_handler(n) {
       var v_path = n.pkg.dirname+'/'+n.target+"."+n.verb;
 
       if (fs.existsSync(c_path)) {
-        console.log("look for controller: ", c_path);
+        //console.log("look for controller: ", c_path);
         try { var c = module.work_require(c_path)[n.verb];
-          if (c) console.log("found!");
+          //if (c) console.log("found!");
           if (c) h.push(function handler(next) {
             try {
               c.call(this, next);

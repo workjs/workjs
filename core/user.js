@@ -81,7 +81,7 @@ w.auth.mw = function auth_mw(next) {
 //user middleware - get current user from session and fetch user data from DB
 //requires auth.mw
 w.auth.usermw = function usermw(next) {
-  this.context.username = this.auth.user && this.auth.user.username();
+  this.context.username = this.auth && this.auth.user && this.auth.user.username();
   next();
 };
 

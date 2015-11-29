@@ -1,7 +1,7 @@
 
 /	GET	www/home
 
-/users	*	:./modules/users
+@	*	:./modules/users	{"auth":"t"}
 
 #/admin/users	* :/modules/users	{"debug":"t", "auth":"t"}
 

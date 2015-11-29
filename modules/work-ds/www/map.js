@@ -16,7 +16,8 @@ module.exports.get = function get_map(next) {
   this.context.r = r;
   this.context.ro = ro;
   this.context.verbs = w.verbs;
-  this.context.x = util.inspect(ro, {depth:10});
+//  this.context.x = util.inspect(ro, {depth:10});
+  this.context.x = util.inspect(w.map, {depth:20});
   r.sort();
   next();
 };
