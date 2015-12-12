@@ -1,6 +1,8 @@
 <h1>Developer Shell!</h1>
 
-<pre>{{ oo }}</pre>
+<pre>this.context:
+
+{{ oo }}</pre>
 
 <form method="POST" enctype="multipart/form-data">
 <textarea style="width:100%;min-height:200px" name="code">{{ code }}</textarea>

@@ -22,7 +22,7 @@ module.exports.get = function get(next) {
     var start = new Date(parseInt(sess_db[i].id));
     var last = new Date(parseInt(sess_db[i].last));
     tab[i] = {
-      cache:w.sessions[id] ? "+" : "",
+      cache:w.session.cache[id] ? "+" : "",
       id:id,
       start:dateformat(start, "yyyy-mm-dd/HH:MM:ss"),
       last:dateformat(last, "yyyy-mm-dd/HH:MM:ss"),

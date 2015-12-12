@@ -1,0 +1,47 @@
+{% extends "master.html" %}
+
+{% block head %}
+<link href="/static/jquery.json-viewer.css" media="all" rel="stylesheet" type="text/css" />
+<script src="/static/jquery.json-viewer.js"></script>
+<style>
+div.obj {cursor:pointer;display:inline-block;vertical-align:top;padding-left:1em;background-repeat:no-repeat;}
+div.new, div.closed {border:1px solid red;background-image: url("/static/img/3sr.png");}
+div.open {border:1px solid blue;background-image: url("/static/img/3sd.png");}}
+
+</style>
+<script>
+var O = {{ r|safe }};
+$(function() {
+  $("#obj").html(O[0]).find(".obj.open").removeClass("open");
+  $("#obj").on("click", ".new", function(e) {
+    var me = $(this);
+    var o = me.data("o");
+    me.toggleClass("new closed");
+    me.hide();
+    me.after(O[o]);
+    e.stopPropagation();
+  });
+  $("#obj").on("click", ".open", function(e) {
+    var me = $(this);
+    me.prev().show();
+    me.hide();
+    e.stopPropagation();
+  });
+  $("#obj").on("click", ".closed", function(e) {
+    var me = $(this);
+    me.next().show();
+    me.hide();
+    e.stopPropagation();
+  });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<h1>ds: This Object</h1>
+"This" Object is the execution context of the request handler.
+<p>this =</p>
+
+<div id="obj" style="font-family:monospace"></div>
+
+{% endblock %}

@@ -16,6 +16,7 @@
 <a href="/ds/map">MAP</a>
 <a href="/ds/shell">Shell</a>
 <a href="/ds/work">Work</a>
+<a href="/ds/this">This</a>
 <a href="/ds/cookies">Cookies</a>
 <a href="/ds/session">Session</a>
 <a href="/doc/">Documentation</a>
@@ -26,7 +27,7 @@
 <a href="/login">login</a>
 <a href="/logout">logout</a>
 
-<div style="position:absolute;top:0;right:10px;">{{ username }}</div>
+<div style="position:absolute;top:0;right:10px;">{{ _work.auth.username }}</div>
   <h1>{{ pagetitle }}</h1>
   {% block content %}{% endblock %}
   <script>{% block script %}{% endblock %}</script>

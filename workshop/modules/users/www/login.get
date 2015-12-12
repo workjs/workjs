@@ -11,7 +11,7 @@
 <h1>Login</h1>
 
 <form id="auth" method="post">
-<div><label for="email">email:</label><input type="email" name="email"></div>
+<div><label for="email">email:</label><input type="email" name="email" value="{{email}}"></div>
 <div><label for="pw">password:</label><input type="password" name="pw"></div>
 <div><button>Login</div>
 </form>

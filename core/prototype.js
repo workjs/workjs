@@ -82,9 +82,6 @@ Work.prototype.sendFileSync = function sendFileSync(root, path) {
   this.sendFile.sync(this, root, path);
 };
 
-Work.prototype.parseForm = body_parser.parseForm;
-Work.prototype.parseFormSync = body_parser.parseFormSync;
-
 var marked = require('marked');
 var hljs = require('highlight.js');
 

@@ -11,11 +11,13 @@ Contents:
 <li><a href=".">Quick Start</a>
 <li><a href="construction.md">Construction</a>
 <li><a href="configuration.md">Configuration</a>
+<li><a href="auth.md">Autherntication</a>
 <li><a href="basics.md">Basics</a>
 <li><a href="map.md">The MAP</a>
 <li><a href="postgres.md">Postgres</a>
 <li><a href="logger.md">Logger</a>
 <li><a href="sessions.md">Sessions</a>
+<li><a href="smtp.md">SMTP</a>
 <li><a href="templating.md">Templating</a>
 <li><a href="ds.md">Developer Support</a>
 <li><a href="utilities.md">Utilities</a>

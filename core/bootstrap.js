@@ -7,6 +7,7 @@ var Module = require('module');
 var w = Module.prototype.work = {};
 
 w.dependencies = {};
+w.mw = {};
 w.caches = {};
 
 w.dependencies.crypto = module.require('crypto');
@@ -42,8 +43,9 @@ w.randomStringAsBase64Url = function randomStringAsBase64Url(size) {
 
 module.exports = function bootstrap(conf) {
 
-w.conf = conf;
 w.runid = Date.now();
+
+w.conf = conf;
 
 if (conf.servermode.toUpperCase() == "DEVELOPMENT") {
   Module.prototype.work_require = function requireUncached(module){
@@ -99,7 +101,7 @@ Sync(function setup() {
   require('./session.js');
   
   //load user+auth subsystem
-  require('./user.js');
+  require('./auth.js');
   
   //load email subsystem
   require('./smtp.js');

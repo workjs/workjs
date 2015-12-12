@@ -8,6 +8,7 @@
 /shell	post	www/shell	{"dbCommit":"t"}
 
 /work	get	www/work
+/this   get     www/this
 /cookies *	www/cookies
 /session get	www/session
 

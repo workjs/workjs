@@ -1,4 +1,5 @@
 var w = module.work;
+w.body_parser = {};
 
 var Busboy = require('busboy');
 var fs = require('fs');
@@ -16,7 +17,7 @@ var limits = {
     headerPairs: 2000
 };
 
-w.parseForm = function parseForm(done) {
+function parseFormAsync(done) {
   var that = this;
   var uploaddir = this.conf.uploaddir;
   var form = {};
@@ -57,7 +58,7 @@ w.parseForm = function parseForm(done) {
   this.req.pipe(busboy);
 };
 
-w.parseFormSync = function parseFormSync(next) {
-  w.parseForm.sync(this);
+w.mw.body_parser = function parseForm(next) {
+  parseFormAsync.sync(this);
   next();
 };

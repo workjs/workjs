@@ -208,7 +208,7 @@ function build_handler(n) {
     var h = []; //list of functions (modules, controller, view) for this handler
     if (n.flags["access"]) h.push(w.logger.access);
     if (n.flags["debug"]) h.push(w.logger.debug);
-    if (n.flags["formData"]) h.push(w.parseFormSync);
+    if (n.flags["formData"]) h.push(w.mw.body_parser);
     if (n.flags["dbCommit"]) h.push(w.dbm.commit);
     if (n.flags["dbRollback"]) h.push(w.dbm.rollback);
     if (n.flags["dbCommit"] && n.flags["dbRollback"])
@@ -216,7 +216,6 @@ function build_handler(n) {
     if (n.flags["session"]) h.push(w.session.mw);
     if (n.flags["auth"]) if (n.flags["session"]) h.push(w.auth.mw) 
       else { h.push(w.session.mw); h.push(w.auth.mw); }
-    if (n.flags["user"]) h.push(w.auth.usermw);
 
     //if null target -> we are finished
     if (n.target === '=') {

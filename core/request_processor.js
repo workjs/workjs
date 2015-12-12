@@ -53,6 +53,7 @@ function route() {
   
   this.url = url.parse(this.req.url, true);
   this.context = this.query = this.url.query || {};
+  this.context._work = this;
   this.context._js = [];
   this.context._css = [];
   

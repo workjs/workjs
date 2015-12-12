@@ -58,3 +58,4 @@ Size is the unencoded size, therefore the returned string will be longer.
 ### work.dependencies
 WorkJS imports several node and external modules and attaches them to the work object:
 crypto cookies bcrypt base64url syncho
+

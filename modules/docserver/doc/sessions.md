@@ -64,11 +64,12 @@ But you could also keep the session and only delete the session data.
 Use postgreSQL JSON path to select and delete session from database and from session cache.
 This is to e.g. kick a user.
 
-### work.sessions
+### work.session.cache
 Session cache in Memory.
 
-### work.session.mw
+### work.session.mw(next)
 session middleware function
+fetch session from cookie and cache and DB, create new session if none present
 
 ### work.session.update
 conf.session_update

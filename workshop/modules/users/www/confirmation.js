@@ -1,16 +1,18 @@
 var util = require('util');
 var w = module.work;
 
+require("../lib/init.js");
+
 var confirmationTimeout = w.conf.auth_confirmationTimeout * 1000;
 
 module.exports.get = function confirmation(next) {
   var randomurl = this.context._location;
   
-  if (w.caches.user_confirmation[randomurl] &&
-     (this.id - w.caches.user_confirmation[randomurl].now < confirmationTimeout)) {
-    console.log("ddd", w.caches.user_confirmation[randomurl].email);
-    w.caches.user_confirmation[randomurl].now = this.id;
-    this.context.email = w.caches.user_confirmation[randomurl].email;
+  if (w.auth.conf_cache[randomurl] &&
+     (this.id - w.auth.conf_cache[randomurl].now < confirmationTimeout)) {
+    console.log("ddd", w.auth.conf_cache[randomurl].email);
+    w.auth.conf_cache[randomurl].now = this.id;
+    this.context.email = w.auth.conf_cache[randomurl].email;
     
     next();
     
@@ -18,15 +20,15 @@ module.exports.get = function confirmation(next) {
 
 };
 
-//    delete w.caches.user_confirmation[randomurl];  
+//    delete w.auth.conf_cache[randomurl];  
 
 module.exports.post = function confirmation(next) {
   var randomurl = this.context.randomurl;
-  if (w.caches.user_confirmation[randomurl] &&
-     (this.id - w.caches.user_confirmation[randomurl].now < confirmationTimeout)) {
+  if (w.auth.conf_cache[randomurl] &&
+     (this.id - w.auth.conf_cache[randomurl].now < confirmationTimeout)) {
 
-    var email = w.caches.user_confirmation[randomurl].email;
-    var hash = this.auth.hash(this.context.pw);
+    var email = w.auth.conf_cache[randomurl].email;
+    var hash = w.auth.hash(this.context.pw);
     
     if (email) {
       var user_id = this.tx.only("insert into users (email, nick, hash) values (:email, :nick, :hash)"
