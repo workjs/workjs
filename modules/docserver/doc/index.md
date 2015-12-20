@@ -11,6 +11,8 @@ It uses html5 features and does *not* care to support old web clients.
 * Logging: detailed logging - messages, access, debugging with time stamps
 * Reload: automatically (watch your files) or manually reload on changes without server restart
 
+WorkJS does not care about old browsers and requires PostgreSQL 9.5!
+
 ## Quick Start
 
 ### Installation

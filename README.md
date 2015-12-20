@@ -21,13 +21,15 @@ WorkJS is a Web Application Framework based on [node.js](https://nodejs.org/)
 * Logging: detailed logging - messages, access, debugging with time stamps
 * Reload: automatically (watch your files) or manually reload on changes without server restart
 
+WorkJS does not care about old browsers and requires PostgreSQL 9.5!
+
 ## Quick Start
 
 ### Installation
 
 You need a working node.js installation and npm to install WorkJS.
 
-You also need a PostgreSQL database server (9.3 or newer) with a new database.
+You also need a PostgreSQL database server (9.5) with a new database.
 
 For a quick start install the WorkJS package and create a boilerplate application.
 Edit app.js to match your PostgreSQL server and database name.
