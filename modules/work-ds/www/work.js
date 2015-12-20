@@ -1,8 +1,6 @@
-var util = require('util');
-
 var w = module.work;
 
 module.exports.get = function get_map(next) {
-  this.context.r = util.inspect(w, {depth:10});
+  this.context.x = w.util.inspect(w);
   next();
 };

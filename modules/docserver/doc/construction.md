@@ -14,6 +14,6 @@ functions), docserver (markdown documemtation server), work-store (file
 store - under construction) and work-user (user management - under construction).
 
 Each route definition also can specify some middleware functionality to be
-used with this route. Available middleware provides functions for logging,
+used with this route. Available middleware provide functions for logging,
 postgresql database access, session support, authentication and form
 parsing.

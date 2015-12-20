@@ -96,6 +96,7 @@ Sync(function setup() {
 
 //load global db fkts
 ///// deleted !! var dbfkt = require("./db.js");
+  require('./util.js');
 
   //load session subsystem
   require('./session.js');
@@ -105,6 +106,9 @@ Sync(function setup() {
   
   //load email subsystem
   require('./smtp.js');
+  
+  //load filestore subsystem
+  require('./storage.js');
 
 try { fs.mkdirSync(w.conf.uploaddir); } catch (e) { };
 

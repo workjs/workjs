@@ -11,13 +11,11 @@ module.exports.get = function get_map(next) {
     var verb = w.verbs[i];
     list(w.map[verb]);
   };
-//  this.context.m = util.inspect(w.map, {depth:10});
-//  this.context.r = util.inspect(ro, {depth:10});
   this.context.r = r;
   this.context.ro = ro;
   this.context.verbs = w.verbs;
-//  this.context.x = util.inspect(ro, {depth:10});
-  this.context.x = util.inspect(w.map, {depth:20});
+
+  this.context.x = w.util.inspect(w.map);
   r.sort();
   next();
 };

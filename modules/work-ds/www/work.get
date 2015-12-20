@@ -1,9 +1,20 @@
 {% extends "master.html" %}
 
+{% block head %}
+<link href="/static/work-util.css" media="all" rel="stylesheet" type="text/css" />
+<script src="/static/work-util.js"></script>
+
+<script>
+$(function() { work_inspect("#obj", {{ x|safe }}); });
+</script>
+{% endblock %}
+
+
 {% block content %}
 <h1>ds: Work Object</h1>
 The Work Object is attached to the global module structure.
-<pre>module.work =
 
-{{ r }}</pre>
+module.work =
+<div id="obj"></div>
+
 {% endblock %}

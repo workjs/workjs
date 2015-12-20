@@ -1,5 +1,15 @@
 {% extends "master.html" %}
 
+{% block head %}
+<link href="/static/work-util.css" media="all" rel="stylesheet" type="text/css" />
+<script src="/static/work-util.js"></script>
+
+<script>
+$(function() { work_inspect("#obj", {{ x|safe }}); });
+</script>
+{% endblock %}
+
+
 {% block content %}
 <style>table,th,td {border:1px solid;padding:4px;border-collapse: collapse;}</style>
 <h1>ds: Site-Map</h1>
@@ -35,5 +45,7 @@
 {% endif %}{% endfor %}
 {% endfor %}
 </table>
-<pre>{{x}}</pre>
+
+<div id="obj"></div>
+
 {% endblock %}

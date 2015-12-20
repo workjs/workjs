@@ -1,7 +1,9 @@
 var util = require('util');
 
+var w = module.work;
+
 module.exports.post = function post(next) {
-  this.context.oo = util.inspect(this.context);
+  this.context.x = w.util.inspect(this.context);
   try {
   var r = function(str){
     return(eval(str));
@@ -13,7 +15,6 @@ module.exports.post = function post(next) {
 
 
 module.exports.get = function get(next) {
-  this.context.oo = util.inspect(this.context);
   next();
 };
 

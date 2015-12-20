@@ -1,8 +1,22 @@
 {% extends "master.html" %}
 
+{% block head %}
+<link href="/static/work-util.css" media="all" rel="stylesheet" type="text/css" />
+<script src="/static/work-util.js"></script>
+
+<script>
+$(function() { work_inspect("#obj", {{ x|safe }}); });
+</script>
+{% endblock %}
+
 {% block content %}
 {% include "www/ds.incl" %} 
 <pre style="background:grey;min-height:100px">
 {{ r }}
+
 </pre>
+
+this.context:
+<div id="obj"></div>
+
 {% endblock %}

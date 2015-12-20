@@ -1,7 +1,7 @@
 # WorkJS Authentication and User Management
 
-WorkJS provides to create password hashes and check passwords and log users in and out.
-This uses WorkJS Sessions, therefore if authentication is configured for a route,
+WorkJS provides functions to create password hashes and check passwords and log users in and out.
+Authentication uses WorkJS Sessions, therefore if authentication is configured for a route,
 sessions are also forced.
 
 If a module flag *auth* is defined for a route, the WorkJS authentication is used.

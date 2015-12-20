@@ -1,0 +1,5 @@
+/* json object viewer */
+.json.obj {cursor:pointer;display:inline-block;vertical-align:top;padding-left:1em;background-repeat:no-repeat;}
+.json.new, .json.closed {border:1px solid red;background-image: url("/static/img/3sr.png");}
+.json.open {border:1px solid blue;background-image: url("/static/img/3sd.png");}}
+

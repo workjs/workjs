@@ -10,6 +10,8 @@ WorkJS provides several helpers to support application development:
 
 **Work:** show the module.work data structure
 
+**This::** show the "this" data structure in the request handler
+
 **Cookies:** show anmd clear current session cookies
 
 **Sessions:** show current sessions

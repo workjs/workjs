@@ -59,3 +59,31 @@ Size is the unencoded size, therefore the returned string will be longer.
 WorkJS imports several node and external modules and attaches them to the work object:
 crypto cookies bcrypt base64url syncho
 
+## Work Object Inspector
+Inspect object with the browser.
+Requires JQuery and work-util.css and work-util.js.
+
+Usage example:
+JQuery is loaded in master.html
+"r" is the object to enspect
+
+
+
+~~~html
+{% extends "master.html" %}
+
+{% block head %}
+<link href="/static/work-util.css" media="all" rel="stylesheet" type="text/css" />
+<script src="/static/work-util.js"></script>
+
+<script>
+$(function() { work_inspect("#obj", {{ r|safe }}); });
+</script>
+{% endblock %}
+
+{% block content %}
+...
+<div id="obj"></div>
+...
+{% endblock %}
+~~~
