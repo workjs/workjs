@@ -51,4 +51,9 @@ conf.auth_confirmationTimeout = 1200;
 //Sender address in mails sent from this server
 conf.smtp_from = "workJS@workJS.do.main"
 
+//content repository location in file system
+conf.cr_root = conf.rootdir + "/CR"
+//current place to store inside of cr_root
+conf.cr_partition = "A"
+
 require('workjs').run(conf);

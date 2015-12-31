@@ -1,7 +1,7 @@
 var util = require('util');
 var w = module.work;
 
-require("../lib/init.js");
+//require("../lib/init.js");
 
 var confirmationTimeout = w.conf.auth_confirmationTimeout * 1000;
 
@@ -31,7 +31,7 @@ module.exports.post = function confirmation(next) {
     var hash = w.auth.hash(this.context.pw);
     
     if (email) {
-      var user_id = this.tx.only("insert into users (email, nick, hash) values (:email, :nick, :hash)"
+      var user_id = this.tx.only("insert into work_users (email, nick, hash) values (:email, :nick, :hash)"
       +" on CONFLICT (email) DO UPDATE set nick=:nick, hash=:hash"
       +" returning user_id", {email: email, nick: this.context.nick, hash:hash});
       this.reply303("/login?email="+email);

@@ -21,6 +21,7 @@ Contents:
 <li><a href="templating.md">Templating</a>
 <li><a href="ds.md">Developer Support</a>
 <li><a href="utilities.md">Utilities</a>
+<li><a href="repo.md">Content Repository</a>
 </div>
 {{ md|safe }}
 {% endblock %}

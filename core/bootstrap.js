@@ -107,8 +107,8 @@ Sync(function setup() {
   //load email subsystem
   require('./smtp.js');
   
-  //load filestore subsystem
-  require('./storage.js');
+  //load content repository subsystem
+  require('./repo.js');
 
 try { fs.mkdirSync(w.conf.uploaddir); } catch (e) { };
 

@@ -1,18 +1,19 @@
-
+require('./repo.js');
 var w = module.work;
 
 /*
 drop table users cascade ;
 */
 
-w.db.query("create table IF NOT EXISTS users (" +
+w.db.query("create table IF NOT EXISTS work_users (" +
   "user_id serial PRIMARY KEY, " +
   "email text UNIQUE, " +
   "nick text, " +
   "hash text, " +
   "login timestamptz, " +
   "login2 timestamptz, " +
-  "creation timestamptz DEFAULT now());" );
+  "creation timestamptz DEFAULT now(), " +
+  "rootfolder int REFERENCES work_repo (item_id) ON DELETE SET NULL);" );
 
 w.auth = {};
 w.auth.conf_cache = {};
@@ -22,7 +23,7 @@ function Auth(wrk) {
   this.user = null;
   this.username = null;
   if (wrk.session && wrk.session.data && wrk.session.data.user_id) {
-    var u = w.db.one("SELECT * FROM users WHERE user_id=:user_id", {user_id:wrk.session.data.user_id});
+    var u = w.db.one("SELECT * FROM work_users WHERE user_id=:user_id", {user_id:wrk.session.data.user_id});
     if (u) {this.user = new User(u); this.username = this.user.username(); }
   };
 };
@@ -30,7 +31,7 @@ function Auth(wrk) {
 Auth.prototype.login = function login(user) {
   this.wrk.session.set("user_id", user.user_id);
   this.user = user;
-  w.db.query("UPDATE users SET login2=login, login=now() WHERE user_id=:user_id", {user_id:user.user_id});
+  w.db.query("UPDATE work_users SET login2=login, login=now() WHERE user_id=:user_id", {user_id:user.user_id});
 };
 
 Auth.prototype.logout = function logout() {

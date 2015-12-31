@@ -25,18 +25,20 @@ function parseFormAsync(done) {
   busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
     var md5 = crypto.createHash('md5');
     md5.setEncoding('hex');
-    var path = uploaddir + '/' + w.unique();
+    var file_id = w.unique();
+    var path = uploaddir + '/' + file_id;
     file.on('error', that.replyError);
 
     var size = 0;
     file.on('data', function (chunk) { size += chunk.length; });
     md5.on('finish', function() {
-      var f = { path:path, filename:filename, encoding:encoding, mimetype:mimetype, 
-                size:size, md5:md5.read() };
+      var f = { file_id:file_id, path:path, filename:filename, encoding:encoding,
+                mimetype:mimetype, size:size, md5:md5.read() };
       if (form.hasOwnProperty(fieldname)) { 
         if (form[fieldname] instanceof Array) { form[fieldname].push(f); }
         else form[fieldname] = [form[fieldname], f]; }
-      else { form[fieldname] = f; };
+      else if (fieldname.slice(-1) === '*') { form[fieldname] = [f]; }
+           else { form[fieldname] = f; };
     });
     file.pipe(fs.createWriteStream(path));
     file.pipe(md5);
@@ -45,7 +47,8 @@ function parseFormAsync(done) {
     if (form.hasOwnProperty(fieldname)) {
       if (form[fieldname] instanceof Array) { form[fieldname].push(val); }
       else form[fieldname] = [form[fieldname], val]; }
-    else { form[fieldname] = val; };
+    else if (fieldname.slice(-1) === '*') { form[fieldname] = [val]; }
+        else { form[fieldname] = val; };
   });
   busboy.on('partsLimit', function() { that.reply500("parseForm partsLimit"); });
   busboy.on('filesLimit', function() { that.reply500("parseForm filesLimit"); });

@@ -1,7 +1,5 @@
 var w = module.work;
 
-require("../lib/init.js");
-
 var confirmationEmailDelay = w.conf.auth_confirmationEmailDelay * 1000;
 
 module.exports.post = function register(next) {
@@ -9,6 +7,7 @@ module.exports.post = function register(next) {
   var email=this.context.email;
 
   w.auth.conf_cache[randomurl] = {now:this.id, email:email};
+  
   if (!w.auth.conf_cache[email] || 
      (this.id - w.auth.conf_cache[email] > confirmationEmailDelay)) {
     console.log("send email !!!! to ", email, randomurl);
