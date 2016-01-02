@@ -28,14 +28,18 @@ of the avaliable file is returned.
 
 You propably will not use this.
 
-### module.work.cr.add(file, folder, thumb)
+### module.work.cr.add_file(file, folder, thumb)
 Put a file into the CR below folder. Thumb can point to an additional file in work_storage 
 intended to be used as thumbnail image in an user interface.
 
-### this.cr_add(file, folder, thumb)
+### this.cr_add_file(file, folder, thumb)
 Same as module.work.cr.add but the insert into the work_repo runs in the request transaction.
 The insert into the work_storage always runs in its own transaction as it is tied to the file
 which should not get lost if the transaction rolls back.
+
+### module.work.cr.add_folder(name, folder, thumb)
+### this.cr_add_folder(name, folder, thumb)
+Add a new folder to the CR below folder and with optional thumb.
 
 ### this.cr_download(item_id)
 Download the item (file) stored at item_id.

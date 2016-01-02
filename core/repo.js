@@ -61,14 +61,19 @@ function repo(cr_root, cr_partition) {
   };
 
   //put a single file into the content repository
-  this.add = function add(file, folder, thumb) {
+  this.add_file = function add_file(file, folder, thumb) {
     var stock_id = cr.stock(file);
     
-    //if (!thumb) { thumb = null; }
     return w.db.only("insert into work_repo (name, mimeType, stock_id, folder, thumb) " +
       "VALUES (:name, :mime, :stock_id, :folder, :thumb) " +
       "RETURNING item_id;",
       {name:file.filename, mime:file.mimetype, stock_id:stock_id, folder:folder, thumb:thumb});
+  };
+  
+  this.add_folder = function add_folder(name, folder, thumb) {
+    return w.db.only("insert into work_repo (name, folder, thumb) " +
+      "VALUES (:name, :folder, :thumb) RETURNING item_id;",
+      {name:name, folder:folder, thumb:thumb});
   };
 
 };
