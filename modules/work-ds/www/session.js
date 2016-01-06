@@ -14,7 +14,7 @@ module.exports.get = function get(next) {
   
   this.context.sessions = util.inspect(w.sessions);
   
-  var sess_db = this.tx.rows("select id, data, last FROM work_session order by id desc");
+  var sess_db = this.db.rows("select id, data, last FROM work_session order by id desc");
   this.context.db_sessions = util.inspect(sess_db);
   
   for (var i=0; i<sess_db.length; ++i) {

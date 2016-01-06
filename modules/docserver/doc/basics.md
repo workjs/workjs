@@ -10,7 +10,7 @@ Examples:
 ~~~javascript
 this.log("hi xxx");   
 this.context.title = 'Hello World';
-this.tx.one("SELECT * FROM sometable");
+this.db.one("SELECT * FROM sometable");
 this.reply404("error ....");
 ~~~
 

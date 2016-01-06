@@ -177,16 +177,16 @@ function DB() {
 
 //middlewares
 function rollback(next) {
-      this.tx = this.work.db.begin();
+      this.db = this.work.db.begin();
       next();
-      this.tx.rollback_sync();
+      this.db.rollback_sync();
 };
 
 function commit(next) {
-      this.tx = this.work.db.begin();
+      this.db = this.work.db.begin();
       next();
-      if (this.error) { this.tx.rollback_sync(); }
-      else { this.tx.commit_sync(); }
+      if (this.error) { this.db.rollback_sync(); }
+      else { this.db.commit_sync(); }
 };
 
 

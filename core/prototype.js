@@ -112,36 +112,4 @@ Work.prototype.marked = function markdown(md) {
 
 Work.prototype.randomStringAsBase64Url = module.work.randomStringAsBase64Url;
 
-//CR
-Work.prototype.cr_add_file = function cr_add(file, folder, thumb) {
-  var stock_id = module.work.cr.stock(file);
-  
-  return this.tx.only("insert into work_repo (name, mimeType, stock_id, folder, thumb) " +
-    "VALUES (:name, :mime, :stock_id, :folder, :thumb) " +
-    "RETURNING item_id;",
-    {name:file.filename, mime:file.mimetype, stock_id:stock_id, folder:folder, thumb:thumb});
-};
-
-Work.prototype.cr_add_folder = function cr_add_folder(name, folder, thumb) {
-  return this.tx.only("insert into work_repo (name, folder, thumb) " +
-    "VALUES (:name, :folder, :thumb) RETURNING item_id;",
-    {name:name, folder:folder, thumb:thumb});
-};
-
-Work.prototype.cr_send = function cr_send(item_id, disposition) {
-  var item = this.tx.one("select s.location, r.name, r.mimetype " +
-    "from work_storage s, work_repo r " +
-    "where r.item_id=:item_id and r.stock_id = s.stock_id",
-    {item_id:item_id});
-  this.res.setHeader('Content-type', item.mimetype);
-  this.res.setHeader('Content-disposition', disposition+'; filename=' + item.name);
-  this.sendFileSync(module.work.cr.cr_root, item.location);
-};
-
-Work.prototype.cr_download = function cr_download(item_id) {
-  this.cr_send(item_id, "attachment");
-};
-
-Work.prototype.cr_open = function cr_open(item_id) {
-  this.cr_send(item_id, "inline");
-};
+Object.defineProperty(Work.prototype, "cr", {get: function() { return new module.work.crx(this); }});

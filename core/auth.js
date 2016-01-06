@@ -64,9 +64,36 @@ function User(u) {
   this.user_id = u.user_id;
   this.email = u.email;
   this.nick = u.nick;
+  this.rootfolder = u.rootfolder;
 
   this.username = function() {
     return(this.nick);
   };
 
+};
+
+//get rootfolder of current user or create new one 
+Auth.prototype.get_user_rootfolder_id = function get_user_rootfolder_id() {
+  if (this.user) {
+    if (this.user.rootfolder) { return this.user.rootfolder }
+    else {
+      this.user.rootfolder = this.wrk.cr_add_folder(this.user.nick);
+      this.wrk.db.query("UPDATE work_users set rootfolder=:rootfolder WHERE user_id=:user_id",
+        {user_id:this.user.user_id, rootfolder:this.user.rootfolder});
+      return this.user.rootfolder
+    };
+  } else return null;
+};
+
+w.auth.get_user_rootfolder_id = function get_user_rootfolder_id(user_id) {
+  var u = w.db.one("SELECT * FROM work_users WHERE user_id=:user_id", {user_id:user_id});
+  if (u) {
+    if (u.rootfolder) { return u.rootfolder }
+    else {
+      u.rootfolder = w.cr.add_folder(u.nick);
+      this.db.query("UPDATE work_users set rootfolder=:rootfolder WHERE user_id=:user_id",
+        {user_id:user_id, rootfolder:u.rootfolder});
+      return u.rootfolder
+    };
+  } else return null;
 };

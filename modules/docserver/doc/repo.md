@@ -22,32 +22,39 @@ This is the default repository and currently the only one.
 The repository constructor. It allows to create additional CRs.
 
 ### module.work.cr.stock(file)
+### this.cr.stock(file)
 Stores a file in work_storage and returns its "id". The file_size and md5 sum of the file are 
 used to check if the file was already present and if so the file is not stocked again but the id 
 of the avaliable file is returned.
 
-You propably will not use this.
+This dow not run in the request transcation, i.e. the file should be stored in the database 
+even if the request transaction rolls back.
 
+cr.stock is used by cr.add_file.
+You propably will not use it directly.
+
+### this.cr.add_file(file, folder, thumb)
 ### module.work.cr.add_file(file, folder, thumb)
-Put a file into the CR below folder. Thumb can point to an additional file in work_storage 
+Put a file into the CR below folder.
+The optional thumb can point to an additional file in work_storage 
 intended to be used as thumbnail image in an user interface.
 
-### this.cr_add_file(file, folder, thumb)
-Same as module.work.cr.add but the insert into the work_repo runs in the request transaction.
-The insert into the work_storage always runs in its own transaction as it is tied to the file
-which should not get lost if the transaction rolls back.
+cr.add_file runs in the request transaction if called via "this.cr",
+but "cr.stock" used in cr.add_file always run in its own transaction.
+Therefore a file should always be refered from the work_storage table,
+but might not be refered from the work_repo table.
 
+### this.cr.add_folder(name, folder, thumb)
 ### module.work.cr.add_folder(name, folder, thumb)
-### this.cr_add_folder(name, folder, thumb)
 Add a new folder to the CR below folder and with optional thumb.
 
-### this.cr_download(item_id)
+### this.cr.download(item_id)
 Download the item (file) stored at item_id.
 
-### this.cr_open(item_id)
+### this.cr.open(item_id)
 Send the item (file) stored at item_id to open in the browser.
 
-### this.cr_send(item_id, disposition)
+### this.cr.send(item_id, disposition)
 Send the item (file) stored at item_id to open (disposition = 'inline') or download (disposition = 'attachment');
 
 ## Database tables:
