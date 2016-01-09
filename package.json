@@ -1,6 +1,6 @@
 {
   "name": "workjs",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "WorkJS Web Application Framework",
   "repository": {
     "type": "git",
@@ -25,6 +25,7 @@
     "commander": "^2.8.1",
     "cookies": "*",
     "dateformat": "*",
+    "fibers": "^1.0.8",
     "highlight.js": "^8.8.0",
     "marked": "^0.3.5",
     "mkdirp": "^0.5.1",
@@ -38,7 +39,7 @@
     "ws": "*"
   },
   "engines": {
-    "node": "^4.0.0"
+    "node": "^5.4.0"
   },
   "author": {
     "name": "Franz Penz"

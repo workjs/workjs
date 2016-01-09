@@ -1,4 +1,3 @@
-
 var mkdirp = module.require('mkdirp');
 var fs = module.require('fs');
 var util = require('util');
@@ -28,7 +27,7 @@ module.exports = function(options) {
   
   function _creatLogStreams() {
     var now = Date.now(); 
-    var logday = dateformat(now, "yyyy-mm-dd");
+    logday = dateformat(now, "yyyy-mm-dd");
 
     mlogfs = fs.createWriteStream(mlogdir+logday+'.log', {flags:'a'});
     mlogfs.on('error', function(e){ console.log('error: ', e); });
@@ -56,14 +55,18 @@ module.exports = function(options) {
   function MLogger() {
     var now = Date.now(); 
     var datestring = dateformat(now, "yyyy-mm-dd/HH:MM:ss");
-    if (datestring.substring(0, 9) !== logday) {
+    if (datestring.substring(0, 10) !== logday) {
       _closeLogStreams();
       _creatLogStreams();
     };
     
     if (!this.id) { this.id = "---"; }
     for (var i=0; i<arguments.length; i++) {
-      mlogfs.write(datestring+" "+this.id+" ### "+util.inspect(arguments[i], {depth:6})+"\n");
+      if (typeof(arguments[i]) === 'string') {
+        mlogfs.write(datestring + " " + this.id + " ### " + arguments[i] + "\n");
+      } else {
+        mlogfs.write(datestring + " " + this.id + " ### " + util.inspect(arguments[i], {depth:6})+"\n");
+      };
     };
   };
 
@@ -73,7 +76,7 @@ module.exports = function(options) {
     var end = Date.now();
     var duration = end - start;
     var now = dateformat(end, "yyyy-mm-dd/HH:MM:ss");
-    if (now.substring(0, 9) !== logday) {
+    if (now.substring(0, 10) !== logday) {
       _closeLogStreams();
       _creatLogStreams();
     };
@@ -93,7 +96,7 @@ module.exports = function(options) {
   function DLogger(next, done) {
     var start = Date.now();
     var datestring = dateformat(start, "yyyy-mm-dd/HH:MM:ss");
-    if (datestring.substring(0, 9) !== logday) {
+    if (datestring.substring(0, 10) !== logday) {
       _closeLogStreams();
       _creatLogStreams();
     };
@@ -120,8 +123,13 @@ module.exports = function(options) {
       var duration = now - start;
       var datestring = dateformat(now, "yyyy-mm-dd/HH:MM:ss");
       for (var i=0; i<arguments.length; i++) {
-        dlogfs.write(datestring+ " " +id
-        + " === [" +duration+"ms] " + util.inspect(arguments[i]) + "\n");
+        if (typeof(arguments[i]) === 'string') {
+          dlogfs.write(datestring+ " " +id
+            + " === [" +duration+"ms] " + arguments[i] + "\n")
+        } else {
+          dlogfs.write(datestring+ " " +id
+            + " === [" +duration+"ms] " + util.inspect(arguments[i]) + "\n")
+        };
       };
     };
   };
