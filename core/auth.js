@@ -6,14 +6,14 @@ drop table users cascade ;
 */
 
 w.db.query("create table IF NOT EXISTS work_users (" +
-  "user_id serial PRIMARY KEY, " +
-  "email text UNIQUE, " +
-  "nick text, " +
-  "hash text, " +
-  "login timestamptz, " +
-  "login2 timestamptz, " +
-  "creation timestamptz DEFAULT now(), " +
-  "rootfolder int REFERENCES work_repo (item_id) ON DELETE SET NULL);" );
+  "user_id serial PRIMARY KEY" +
+  ",email text UNIQUE" +
+  ",nick text" +
+  ",hash text" +
+  ",login timestamptz" +
+  ",login2 timestamptz" +
+  ",creation timestamptz DEFAULT now()" +
+  ",rootfolder int REFERENCES work_repo (item_id) ON DELETE SET NULL);" );
 
 w.auth = {};
 w.auth.conf_cache = {};

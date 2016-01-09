@@ -10,21 +10,21 @@ drop table work_storage cascade ;
 */
 
 w.db.query("create table IF NOT EXISTS work_storage (" +
-  "stock_id serial PRIMARY KEY, " +
-  "file_size int, " +
-  "md5 text, " +
-  "location text, " +
-  "UNIQUE(file_size, md5));" );
+  "stock_id serial PRIMARY KEY" +
+  ",file_size int" +
+  ",md5 text" +
+  ",location text" +
+  ",UNIQUE(file_size, md5));" );
 
 w.db.query("create table IF NOT EXISTS work_repo (" +
-  "item_id serial PRIMARY KEY, " +
-  "name text, " +
-  "mimeType text, " +
-  "stock_id int REFERENCES work_storage (stock_id), " +
-  "folder int REFERENCES work_repo ON DELETE CASCADE, " +
-  "creation timestamptz DEFAULT now(), " +
-  "modification timestamptz DEFAULT now(), " +
-  "thumb int REFERENCES work_storage (stock_id));" );
+  "item_id serial PRIMARY KEY" +
+  ",name text" +
+  ",mimeType text" +
+  ",stock_id int REFERENCES work_storage (stock_id)" +
+  ",folder int REFERENCES work_repo ON DELETE CASCADE" +
+  ",creation timestamptz DEFAULT now()" +
+  ",modification timestamptz DEFAULT now()" +
+  ",thumb int REFERENCES work_storage (stock_id));" );
 
 w.REPO = function repo(cr_root, cr_partition) {
   this.cr_root = cr_root;
