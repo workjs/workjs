@@ -122,7 +122,12 @@ function DB() {
       for (var i=0; i<p.length; i++) {
         q.push(param[p[i]]);
       };
-      return(this.pg_query_sync.call(this, r, q));
+      try { var r =  this.pg_query_sync.call(this, r, q); } catch (e) {
+        w.log("ERROR in SQL query", e.toString(), "SQL:" + r, "Param:" + q);
+        w.log(new Error().stack);
+        return null;
+      };
+      return r;
     };
     
     this.rows = function rows(sql, param) {
