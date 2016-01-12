@@ -7,7 +7,9 @@ Developer Support:
 <li><a href="map">Site-Map</a>
 <li><a href="shell">Developer Shell</a>
 <li><a href="work">Work Data Structure</a>
-<li><a href="cookies">Cookies</a>
-<li><a href="session">Session</a>
+<li><a href="this">"This" Context Object</a>
+<li><a href="cookies">List Cookies</a>
+<li><a href="session">Session Status</a>
+<li><a href="/doc/">WorkJS Documentation</a>
 </ul>
 {% endblock %}
