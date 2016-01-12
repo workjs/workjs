@@ -5,6 +5,9 @@ conf.name = "Demo";
 
 conf.port = 3000;
 
+//origin of this site as seen from outside (used to check websocket origin)
+conf.origin = "http://localhost:3000";
+
 conf.rootdir = process.cwd();
 
 conf.servermode = "DEVELOPMENT";
@@ -35,6 +38,8 @@ conf.session_decline = 2 * 24 * 60 * 60;
 
 //delete stale sessions from DB
 conf.session_sweep = 120;
+
+conf.cookiename = "work:sess";
 
 //bcrypt hash cost (salt / rounds) - see https://github.com/ncb000gt/node.bcrypt.js
 conf.auth_salt = 10;

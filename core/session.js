@@ -17,7 +17,7 @@ function Session(wrk) {
   this.wrk = wrk;
   this.now = wrk.id;
   this.session_cookie = new w.dependencies.cookies(wrk.req, wrk.res, w.conf.session_secrets);
-  this.id = this.session_cookie.get( "work:sess", { signed: true } );
+  this.id = this.session_cookie.get( w.conf.cookiename, { signed: true } );
   if (this.id) { //request contains a valid session_cookie
     if (this.id > 0) { //session with data
       if (w.session.cache[this.id]) { //session in session cache

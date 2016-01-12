@@ -113,3 +113,12 @@ Work.prototype.marked = function markdown(md) {
 Work.prototype.randomStringAsBase64Url = module.work.randomStringAsBase64Url;
 
 Object.defineProperty(Work.prototype, "cr", {get: function() { return new module.work.crx(this); }});
+
+
+Work.prototype.add_js = function add_js(target) {
+  this.context._js.push(target);
+};
+
+Work.prototype.add_css = function add_css(target) {
+  this.context._css.push(target);
+};

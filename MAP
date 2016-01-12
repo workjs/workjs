@@ -3,6 +3,5 @@
 #/doc/*	get	www/docserver	{"session":"f", "auth":"f", "debug":"t"}
 /doc	get	:./modules/docserver	{"session":"f", "auth":"f", "debug":"f"}
 
-/ds	*	:./modules/work-ds	{"debug":"t", "dbCommit":"f", "auth":"t"}
+/ds	*	:./modules/ds	{"debug":"t", "dbCommit":"f", "auth":"t"}
 
-/fs	*	:./modules/work-store
