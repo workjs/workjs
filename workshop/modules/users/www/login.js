@@ -8,7 +8,7 @@ module.exports.post = function post(next) {
   } else {
     var user = this.db.one("select * from work_users where email=:email",
       {email: this.context.email});
-    if (this.work.auth.check(this.context.pw, user.hash)) {
+    if (user && this.work.auth.check(this.context.pw, user.hash)) {
       this.auth.login(user);
       this.reply303("/");
     } else this.reply303("/login");
