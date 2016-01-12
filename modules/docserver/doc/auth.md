@@ -18,6 +18,10 @@ see [bcrypt](https://github.com/ncb000gt/node.bcrypt.js)
 
 ## Properties
 
+### this.auth.user
+### this.auth.username
+currently logged in user
+
 ### work.auth.hash(pw)
 create hash from password string
 
