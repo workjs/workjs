@@ -2,9 +2,9 @@
 
 WorkJS provides functionality to log requests, debug information and measure execution time.
 
-### Module Flags: access, debug
-
 Some of the logging functionality is controlled with module flags.
+
+### Module Flags: access, debug
 
 If the "access" flag for a route is true, 
 a line is written into an access log file for each reply sent.
@@ -48,6 +48,7 @@ Example
 
 ### this.debug([data][, ...])
 Log an additional debug log line for each parameter "data".
+No debug line is written if a debug flag is set to "f".
 
 ### this.log([data][, ...])
 ### module.work.log([data][, ...])

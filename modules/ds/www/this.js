@@ -3,10 +3,10 @@ var util = require('util');
 var w = module.work;
 
 module.exports.get = function get_this(next) {
-  console.log("get this ----------");
+//  console.log("get this ----------");
 //  this.context.r = util.inspect(this, {depth:10, customInspect:false}).replace(/'/g, '"');
-  var t = util.inspect(this, {depth:1});
-  this.context.t = [3,4,5,{x:2}];
+//  var t = util.inspect(this, {depth:1});
+//  this.context.t = [3,4,5,{x:2}];
   
   var r = this;
 

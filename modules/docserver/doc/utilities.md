@@ -19,16 +19,16 @@ last unique ID created
 ### this.end()
 finalize request, reply my body.
 
-### this.reply303(location)
-reply a "303" redirect response to "location".
+### this.reply3xx(code, location)
+reply a "3xx" redirect response to "location".
 
-### this.reply404(message)
-throw a "404" error with "message"
+### this.reply4xx(code, message)
+throw a "4xx" error with "message"
 
-### this.reply500(message)
-throw a "500" error with "message"
+### this.reply5xx(code, message)
+throw a "5xx" error with "message"
 
-### this.replyError(err)
+### this.throwError(err)
 throw Error "err"
 
 ### this.sendFile(root, path, done)

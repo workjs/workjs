@@ -27,7 +27,7 @@ function parseFormAsync(done) {
     md5.setEncoding('hex');
     var file_id = w.unique();
     var path = uploaddir + '/' + file_id;
-    file.on('error', that.replyError);
+    file.on('error', that.throwError);
 
     var size = 0;
     file.on('data', function (chunk) { size += chunk.length; });
@@ -50,10 +50,10 @@ function parseFormAsync(done) {
     else if (fieldname.slice(-1) === '*') { form[fieldname] = [val]; }
         else { form[fieldname] = val; };
   });
-  busboy.on('partsLimit', function() { that.reply500("parseForm partsLimit"); });
-  busboy.on('filesLimit', function() { that.reply500("parseForm filesLimit"); });
-  busboy.on('fieldsLimit', function() { that.reply500("parseForm fieldsLimit"); });
-  busboy.on('error', that.replyError);
+  busboy.on('partsLimit', function() { that.reply5xx(500, "parseForm partsLimit"); });
+  busboy.on('filesLimit', function() { that.reply5xx(500, "parseForm filesLimit"); });
+  busboy.on('fieldsLimit', function() { that.reply5xx(500, "parseForm fieldsLimit"); });
+  busboy.on('error', that.throwError);
   busboy.on('finish', function() {
     for (var prop in form) { that.context[prop] = form[prop]; };
     done();

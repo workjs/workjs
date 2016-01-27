@@ -1,124 +1,127 @@
-//this is the Work prototype
-//the request_processor instantiantes a work object in every request
-var send = require('send');
-var body_parser = require('./body_parser.js');
+//this is the WorkJS context prototype
+var Module = require('module');
 
-module.exports = Work;
+var w = module.work;
 
-function Work(req, res) {
-  this.req = req;
-  this.req.remoteAddress = this.req.connection.remoteAddress;
-  this.res = res;
-  this.id = Date.now();
+//this is the prototype shared by all contexts
+w.proto.conf = w.conf;
+
+w.proto.dep = w.dep;
+w.proto.DEVELOPMENT = (w.conf.servermode == "DEVELOPMENT");
+
+w.proto.id = "---"; //used in logging
+
+w.proto.rootdir = w.rootdir;
+
+w.proto.work = w;
+
+//    this.runid = this.unique();
+
+//    this.error = null;
+
+/*    this.logger = require("./logger.js")({
+      alogdir:this.conf.log_access,
+      dlogdir:this.conf.log_debug,
+      mlogdir:this.conf.log_message
+    });
+    
+    this.log = this.logger.message;
+    this.debug = null; //will be overwritten if debug flag used
+*/    
+w.proto.marked = function marked(md) {
+      return w.dep.marked(md)
+};
+    
+//http://stackoverflow.com/questions/8855687/secure-random-token-in-node-js/25690754#25690754
+//size is the unencoded size, therefore the returned string will be longer
+w.proto.randomStringAsBase64Url = function randomStringAsBase64Url(size) {
+      return w.dep.base64url(w.dep.crypto.randomBytes(size));
+};
+    
+w.proto.sleep = function sleep(ms) {
+      w.dep.syncho.sleep(ms);
 };
 
-module.work.proto = Work.prototype;
+var unique = 0;
+w.proto.unique = function unique() {
+      var u = Date.now();
+      while (u <= unique) u++;
+      unique = u;
+      return u;
+};
 
-Work.prototype.work = module.work;
-var DEVELOPMENT = Work.prototype.DEVELOPMENT 
-  = (module.work.conf.servermode == "DEVELOPMENT");
+// request prototype
 
-Work.prototype.error = null;
-
-Work.prototype.unique = module.work.unique;
-
-Work.prototype.sleep = module.work.sleep;
+var requestProto = Object.create(w.proto);
 
 //finalize request, reply my body
-Work.prototype.end = function end() {
+requestProto.end = function end() {
 //  if (!res.headersSent) {
 //    if (typeof this.body !== 'undefined') {
-      this.res.setHeader("Content-Type", "text/html; charset=utf-8");
-      if (!this.body) this.body="";
-      this.res.setHeader("Content-Length", Buffer.byteLength(this.body));
-      this.res.write(this.body);
-      this.res.end();
+        this.res.setHeader("Content-Type", "text/html; charset=utf-8");
+        if (!this.body) this.body="";
+        this.res.setHeader("Content-Length", Buffer.byteLength(this.body));
+        this.res.write(this.body);
+        this.res.end();
 //    };
 //  };
 };
-
-Work.prototype.conf = module.work.conf;
-
-Work.prototype.log = function() {
-  module.work.logger.message.apply(this, arguments);
+  
+requestProto.replyJSON = function replyJSON(obj) {
+    this.res.setHeader("Content-Type", "application/json");
+    this.res.end(JSON.stringify(obj));
 };
 
-Work.prototype.debug = function(s) {
-  // noop fallback if no debug flag
+requestProto.reply3xx = function reply3xx(code, path) {
+    this.res.writeHead(code, {"Location": path});
+    this.res.end();
 };
 
-Work.prototype.replyJSON = function replyJSON(obj) {
-  this.res.setHeader("Content-Type", "application/json");
-  this.res.end(JSON.stringify(obj));
+requestProto.reply4xx = function reply4xx(code, message) {
+    this.error = new Error(message);
+    this.error.status = code;
 };
 
-Work.prototype.reply303 = function reply303(path) {
-  this.res.writeHead(303, {"Location": path});
-  this.res.end();
+requestProto.reply5xx = function reply5xx(code, message) {
+    this.error = new Error(message);
+    this.error.status = code;
 };
 
-Work.prototype.reply404 = function reply404(message) {
-  this.error = new Error(message);
-  this.error.status = 404;
+requestProto.throwError = function throwError(err) {
+    console.log("err:", err);
+    console.log("stack:", err.stack);
+    throw(err);
 };
 
-Work.prototype.reply500 = function reply500(message) {
-  this.error = new Error(message);
-  this.error.status = 500;
+requestProto.sendFile = function sendFile(root, path, done) {
+    var sf = w.dep.send(this.req, path, {root:root, dotfiles:'deny', index:false})
+    .on('end', done)
+    .on('error', done)
+    .pipe(this.res);
 };
 
-Work.prototype.replyError = function replyError(err) {
-  console.log("err:", err);
-  console.log("stack:", err.stack);
-  throw(err);
+requestProto.sendFileSync = function sendFileSync(root, path) {
+    console.log("core/prototype.js Work.prototype.sendFileSync");
+    this.sendFile.sync(this, root, path);
 };
 
-Work.prototype.sendFile = function sendFile(root, path, done) {
-  var sf = send(this.req, path, {root:root, dotfiles:'deny', index:false})
-  .on('end', done)
-  .on('error', done)
-  .pipe(this.res);
+requestProto.add_js = function add_js(target) {
+    this.context._js.push(target);
 };
 
-Work.prototype.sendFileSync = function sendFileSync(root, path) {
-  console.log("core/prototype.js Work.prototype.sendFileSync");
-  this.sendFile.sync(this, root, path);
+requestProto.add_css = function add_css(target) {
+    this.context._css.push(target);
 };
 
-var marked = require('marked');
-var hljs = require('highlight.js');
-
-marked.setOptions({
-  highlight: function (code, lang) {
-    if (lang) {
-      return hljs.highlightAuto(code, [lang]).value;
-    } else {
-      return hljs.highlightAuto(code).value;
-    }
-  },
-  renderer: new marked.Renderer(),
-  gfm: true,
-  tables: true,
-  breaks: false,
-  pedantic: false,
-  sanitize: false,
-  smartLists: true,
-  smartypants: false
-});
-
-Work.prototype.marked = function markdown(md) {
-  return marked(md);
+w.proto.newRequestContext = function newRequestContext(req, res) {
+  var context = Object.create(requestProto);
+  context.req = req;
+  context.req.remoteAddress = req.connection.remoteAddress;
+  context.res = res;
+  context.id = w.unique();
+  return context
 };
 
-Work.prototype.randomStringAsBase64Url = module.work.randomStringAsBase64Url;
+// WebSocket prototype
 
-Object.defineProperty(Work.prototype, "cr", {get: function() { return new module.work.crx(this); }});
-
-
-Work.prototype.add_js = function add_js(target) {
-  this.context._js.push(target);
-};
-
-Work.prototype.add_css = function add_css(target) {
-  this.context._css.push(target);
-};
+var wsProto = Object.create(w.proto);

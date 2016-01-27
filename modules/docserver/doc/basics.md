@@ -1,64 +1,43 @@
 # WorkJS Basics
 
-## "this"
+The WorkJS framework provides a set of conventions, core functionality, middleware functions and some mountable components.
 
-WorkJS provides functionality with the request context.
+A WorkJS application is a Node.js package with workjs in its dependencies.
+If "workjs" is required in the package start script, it will load the configuration of the application from a file "CONF" 
+and create http request handlers for the routes definde in a route map file "MAP".
 
-Use it with "this" in your request handler.
-
-Examples:
-~~~javascript
-this.log("hi xxx");   
-this.context.title = 'Hello World';
-this.db.one("SELECT * FROM sometable");
-this.reply404("error ....");
+On load WorkJS attaches a global work context object to node module which can be used in the WorkJS application code 
+to access the WorkJS core functionality.
+~~~
+var w = module.work;
 ~~~
 
-## module.work
-
-For functionality to be used if not in a request context
-WorkJS also provides a "Work" data structure appended to the module structure.
-
-It can be accessed from everywhere via "module.work".
-
+WorkJS contains a boilerplate demo application "workshop" which can be cloned for a quick start.
 ~~~
-var conf = module.work.conf.servermode;
+workjs -c myApp
 ~~~
 
-## Request Parameter
+## WorkJS Package Structure
 
-### url parameters in the query string
+In the WorkJS package you find the following elements:
 
-Query string parameters are automatically placed into this.context.
+The core functionality and the middleware modules are implemented in the
+"core" folder.
 
-Example:
-~~~
-/base/url?x=a&x=8&y=2
-~~~
+The file CONF contains the default configurations which can be overwritten in an application configuration.
 
-this will result in this.context = {x:['a', '8'], y:'2'}
+All url routes served from the WorkJS core are defined in the file "MAP". 
+If defines "/static" as url prefix for static ressources which are served without authorization.
+At "/doc" is a docserver mounted and provides this documentation.
+At "/ds" is the developer support module mounted which provides a toolset to help the developer 
+in development and debugging an application.
 
-Parameters given multiple times or which have a name ending with '*' 
-are returned as arrays.
+Mountable modules - your own and the WorkJS core modules provide their own
+route map. This route maps can be "mounted" at url paths (routes) specified in a MAP
+file. Available WorkJS core modules are work-ds (developer support
+functions), docserver (markdown documemtation server), work-store (file
+store - under construction) and work-user (user management - under construction).
 
-### form fields x-www-form-urlencoded or multipart/form-data
-
-Form fields are fetched if the flag "formData" for a route is set true.
-As with query string parameters, form fields are put into this.context
-and returned as arrays if present multiple times or if the name ends with '*'.
-
-### url segments
-
-If a matching route contains route variables,
-segments which match a variable are put into this.context.
-Url parts which match a wildcard segments are put into "this.context._location".
-
-Example:
-~~~nohighlight
-/user/:user_id/put/:key  *  www/user/put
-~~~
-
-URL: /user/1735/put/12a
-
-This will result in this.context = {user_id:'1735', key:'12a'}
-
+Each route definition in the MAP can also specify some middleware functionality to be
+used with this route. Available middleware are functions for logging,
+postgresql database access, session support, authentication, form parsing and WebSocket support.

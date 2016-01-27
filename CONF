@@ -1,0 +1,68 @@
+var w = module.work;
+
+w.conf.name = "WorkJS Default Application";
+w.conf.port = 3000;
+
+//origin of this site as seen from outside (used to check websocket origin)
+w.conf.origin = "http://localhost:3000";
+
+w.conf.servermode = "DEVELOPMENT";
+//w.conf.servermode = "PRODUCTION";
+
+w.conf.verbs = ["get", "post"];
+// "get", "post", "put", "head", "delete", "options",
+// "trace", "copy", "lock", "mkcol", "move", "propfind", "proppatch", 
+// "unlock", "report", "mkactivity", "checkout", "merge", "m-search",
+// "notify", "subscribe", "unsubscribe", "patch", "search"
+
+w.conf.flags = {};
+w.conf.flags.get = { "access": true, "debug": true, "formData": false,
+  "dbCommit": false, "dbRollback": true, "session": true, "auth": true, "user": true };
+w.conf.flags.post = { "access": true, "debug": true, "formData": true,
+  "dbCommit": true, "dbRollback": false, "session": true, "auth": true, "user": true };
+w.conf.flags.default = { "access": true, "debug": true, "formData": true,
+  "dbCommit": true, "dbRollback": false, "session": true, "auth": false, "user": true };
+
+w.conf.log_access = w.rootdir + "/LOG/access";
+w.conf.log_debug = w.rootdir + "/LOG/debug";
+w.conf.log_message = w.rootdir + "/LOG/debug";
+
+w.conf.db_url = "pg://fp@localhost/work";
+w.conf.db_poolsize = 20;
+
+w.conf.staticdir = w.coredir + "/STATIC";
+
+w.conf.uploaddir = w.rootdir + "/TMP";
+
+w.conf.session_secrets = ["Top Secret"];
+
+//update session in DB
+w.conf.session_update = 60;
+
+//assume unused session to be stale
+w.conf.session_decline = 2 * 24 * 60 * 60;
+
+//delete stale sessions from DB
+w.conf.session_sweep = 120;
+
+w.conf.cookiename = "work:sess";
+
+//bcrypt hash cost (salt / rounds) - see https://github.com/ncb000gt/node.bcrypt.js
+w.conf.auth_salt = 10;
+
+//size of the random string sent during registration process
+w.conf.auth_randomUrlSize = 50;
+
+//how long to wait after an activation code is sent before one is sent again [seconds]
+w.conf.auth_confirmationEmailDelay = 120;
+
+//how long the registration url sent via email remains valid [seconds]
+w.conf.auth_confirmationTimeout = 1200;
+
+//Sender address in mails sent from this server
+w.conf.smtp_from = "workJS@workJS.do.main"
+
+//content repository location in file system
+w.conf.cr_root = w.rootdir + "/CR"
+//current place to store inside of cr_root
+w.conf.cr_partition = "A"

@@ -1,6 +1,6 @@
 {
   "name": "workjs",
-  "version": "1.3.5",
+  "version": "1.4.0",
   "description": "WorkJS Web Application Framework",
   "repository": {
     "type": "git",
@@ -10,10 +10,7 @@
     "node",
     "framework"
   ],
-  "main": "app.js",
-  "scripts": {
-    "start": "node --stack_trace_limit=20 app.js"
-  },
+  "main": "./core/bootstrap.js",
   "bin": {
     "workjs": "bin/generate.js"
   },

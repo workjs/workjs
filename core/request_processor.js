@@ -1,6 +1,3 @@
-var Sync = require('syncho');
-var Work = require('./prototype.js');
-
 var w = module.work;
 var DEVELOPMENT = (module.work.conf.servermode == "DEVELOPMENT");
 
@@ -14,8 +11,8 @@ w.wsserver = require('./work-socket.js').server(w.httpserver);
 
 function listener(req, res) {
   //req.setEncoding('utf8');
-  var work = new Work(req, res);
-  Sync(function request_handler() {
+  var work = w.newRequestContext(req, res);
+  w.dep.syncho(function request_handler() {
       route.call(work);
       if (work.error) {
         var e = work.error;
@@ -49,7 +46,7 @@ var url = require('url');
 
 function route() {
   var n = w.map[this.req.method.toLowerCase()];
-  if (!n) { return this.reply404("no route for method: "+this.req.method); };
+  if (!n) { return this.reply4xx(404, "no route for method: "+this.req.method); };
   
   this.url = url.parse(this.req.url, true);
   this.context = this.query = this.url.query || {};
@@ -76,7 +73,7 @@ function route() {
         n.handler.call(this);
         return
       };
-    return this.reply404("no route to: "+this.req.method+' '+this.req.url);
+    return this.reply4xx(404, "no route to: "+this.req.method+' '+this.req.url);
   };
   
   if (n.handler) {
@@ -85,6 +82,6 @@ function route() {
   } else {
     //var util = require('util');
     //console.log(util.inspect(n, {depth:10}));
-    return this.reply500("no handler found for: "+this.req.method+' '+this.req.url);
+    return this.reply5xx(500, "no handler found for: "+this.req.method+' '+this.req.url);
   };
 };

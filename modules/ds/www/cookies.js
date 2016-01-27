@@ -15,5 +15,5 @@ module.exports.get = function cookies(next) {
 module.exports.post = function cookies(next) {
   var c = new Cookies( this.req, this.res, w.conf.session_secrets );
   c.set("work:sess")
-  this.reply303(this.req.url);
+  this.reply3xx(303, this.req.url);
 };

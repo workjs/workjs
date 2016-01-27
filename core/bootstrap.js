@@ -1,86 +1,48 @@
-var Sync = require('syncho');
-
-global.work = {};
+//global.work = {};
 
 //init global work object
 var Module = require('module');
-var w = Module.prototype.work = {};
 
-w.dependencies = {};
+//create context prototype
+var context = {};
+context.proto = context;
+
+var w = Module.prototype.work = Object.create(context);
+
+require("./dependencies.js");
+
 w.mw = {};
 w.caches = {};
-
-w.dependencies.crypto = module.require('crypto');
-
-w.dependencies.cookies = module.require('cookies');
-w.dependencies.bcrypt = module.require('bcrypt');
-w.dependencies.base64url = module.require('base64url');
-w.dependencies.syncho = Sync;
 
 //work_require for autoreload in development mode defaults to require
 Module.prototype.work_require = Module.prototype.require;
 
-var fs = module.require('fs');
+w.rootdir = process.cwd();
+w.coredir = __dirname.replace("/core", "");
 
-//create unique ID from Date.now
-w.lastID = 0;
-w.unique = function unique() {
-  var u = Date.now();
-  while (u <= w.lastID) u++;
-  w.lastID = u;
-  return u;
-};
+w.conf = {};
+require("../CONF");
+require(w.rootdir+"/CONF");
 
-w.sleep = function sleep(ms) {
-  Sync.sleep(ms);
-};
+require("./prototype.js");
+require("./logger.js");
 
-//http://stackoverflow.com/questions/8855687/secure-random-token-in-node-js/25690754#25690754
-//size is the unencoded size, therefore the returned string will be longer
-w.randomStringAsBase64Url = function randomStringAsBase64Url(size) {
-  return w.dependencies.base64url(w.dependencies.crypto.randomBytes(size));
-};
+w.log("WorkJS starting >>> " + w.conf.name);
 
-module.exports = function bootstrap(conf) {
-
-w.runid = Date.now();
-
-w.conf = conf;
-
-if (conf.servermode.toUpperCase() == "DEVELOPMENT") {
+if (w.conf.servermode.toUpperCase() == "DEVELOPMENT") {
   Module.prototype.work_require = function requireUncached(module){
     delete require.cache[require.resolve(module)];
     return require(module);
   };
 };
 
-//set some work globals
-w.coredir = w.conf.coredir;
-w.rootdir = w.conf.rootdir;
-
 w.verbs = [];
-for (var i = 0; i<w.conf.verbs.length; ++i)
-       w.verbs.push(w.conf.verbs[i].toLowerCase());
-
-//define default flags
 w.flags = {};
-w.flags.get = { "access": true, "debug": true, "formData": false,
-  "dbCommit": false, "dbRollback": true, "session": true, "auth": true, "user": true };
-w.flags.post = { "access": true, "debug": true, "formData": true,
-  "dbCommit": true, "dbRollback": false, "session": true, "auth": true, "user": true };
-w.defaultflags = w.conf.defaultflags || { "access": true, "debug": true, "formData": true,
-  "dbCommit": true, "dbRollback": false, "session": true, "auth": false, "user": true };
-
-w.logger = require("./logger.js")({
-  alogdir:w.conf.log_access,
-  dlogdir:w.conf.log_debug,
-  mlogdir:w.conf.log_message
-});
-
-//fallback log function to be used if not in any Work (request) context
-w.log = w.logger.message;
-
-w.log("Work starting >>> " + w.conf.name);
+for (var i = 0; i<w.conf.verbs.length; ++i) {
+  var verb = w.conf.verbs[i];
+  w.verbs.push(verb);
+  w.flags[verb] = w.conf.flags[verb] || w.conf.flags["default"]
+};
 
 //load templating subsystem
 ///w.templating = module.require('./templating.js')({
@@ -92,7 +54,7 @@ w.dbm = require('./postgres.js')({dburl:w.conf.db_url, poolsize:w.conf.db_poolsi
 w.db = w.dbm.db;
 
 //install required DB contents
-Sync(function setup() {
+w.dep.syncho(function setup() {
 
 //load global db fkts
 ///// deleted !! var dbfkt = require("./db.js");
@@ -104,13 +66,17 @@ Sync(function setup() {
   //load user+auth subsystem
   require('./auth.js');
   
+  require('./groups.js');
+  
   //load email subsystem
   require('./smtp.js');
   
   //load content repository subsystem
   require('./repo.js');
+  
+  require('./work-socket.js');
 
-try { fs.mkdirSync(w.conf.uploaddir); } catch (e) { };
+try { w.dependencies.fs.mkdirSync(w.conf.uploaddir); } catch (e) { };
 
 /////YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
 //w.Work = require("./Work.js");
@@ -128,5 +94,3 @@ require("./package_parser.js");
 require("./request_processor.js");
 
 });
-
-};

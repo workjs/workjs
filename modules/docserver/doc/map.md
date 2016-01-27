@@ -1,9 +1,8 @@
 # WorkJS - The MAP
 
-The route map is a file with name "MAP" in the root directory of the application
-package. It defines the mapping from urlpath and http method of a http
-request to the javascript function and/or the screen template to render 
-the resulting web page.
+The file "MAP" in the root directory of an application package is the route map. 
+It defines the mapping from urlpath and http method of a http request 
+to the javascript function and/or the screen template to render the resulting web page.
 
 The MAP files is composed as follows:
 
@@ -23,7 +22,7 @@ Example:
 The "/home" line defines that if a browser is directed to "http://your.ser.ver/home"
 and sends a http "GET" request, then WorkJS will look for a javascript
 function "get" located in a file "www/home.js" and a nunjucks html template in a file
-"www/home.get" to render the reply page. You can use the "get" funktion or
+"www/home.get" to render the reply page. You can use the "get" function or
 the ".get" template or both together.
 
 The "/login" line defines that a "POST" request sent to "http://your.ser.ver/login"
@@ -37,11 +36,11 @@ The urlpath is a string which starts with "/", "=" or "@".
 Each segment may also be empty.
 
 Each segment may start with a colon - in this case the string of the segment defines 
-the name of an url variable. If a matching url is processed the contents of
-url segments which correspond to url variables are put with the variable name
-in "this.context" object.
+the name of an url variable. If a matching url is processed the contents of each
+url segment which corresponds to an url variable is put into the context object "this.context", 
+using the variable name as selector.
 
-Only the last segment can be defined as wildcard segment with an "*" character.
+Only the last segment can be defined as wildcard segment by means of an "*" character.
 If a matching url is processed the contents of the part of the url starting at the 
 wildcard segment is put into "this.context._location".
 
@@ -54,14 +53,16 @@ It specifies the empty string and can be used to mount modules into the root of 
 ## HTTP Method
 
 The http method ("verb") can be any of the verbs given in the configuration or "*".
-"*" defines the route for all configured verbs.
+"*" defines the route to be valid for all configured verbs.
 
 ## Target
 
-If the target of a route starts with a colon, it specifies a npm package mounted 
-at the given urlpath and method.
-Otherwise the target specifies the path to files containing handler function 
-or a html template.
+If the target of a route starts with a colon, it specifies a subsite module which is a 
+npm package "mounted" at the given urlpath and method. The given urlpath is prefixed to the urlpaths 
+given in the mounted package.
+
+If the target starts with any other character then it is the path to files containing 
+a handler function or a html template.
 
 Examples:
 ~~~nohighlight
@@ -78,16 +79,16 @@ Routes are formed by prepending "/mountpoint" to all urlpaths found in the MAP f
 of package "my-subsite".
 
 The route with urlpath "/hello" defines that GET requests to a urlpath "/hello"
-will be handled by a javascript function "get" in a file "www/hello.js" if 
-such a file and function exists.
-It also defines that a nunjucks template /hello.get if it exists is used 
+will be handled by a javascript function "get" in a file "www/hello.js", 
+if such a file and function exists.
+It also defines that a nunjucks template /hello.get - if it exists - is used 
 to render a reply.
 
 You can use a handler function or a nunjucks template or both together.
 
 To implement a javascript handler function:
 
-* export a function named after the http method (verb) you want to server (e.g. "get")
+* export a function(next) named after the http method (verb) you want to server (e.g. "get")
 * use "this.context" object to set values to be output in a template
 * a call to next() is required to render a template
 
@@ -108,28 +109,30 @@ Example nunjucks template www/hello.get
 
 ## Module Flags
 
-WorkJS defines some module flags (dbCommit, dbRollback, session, logAccess, logDetail, formData).
+WorkJS defines some module flags (access, debug, formData, dbCommit, dbRollback, session, auth, ws).
 Each of these flags can be set to true or false with the characters "t" and "f".
 
-Default values for all module flags can be defined in the WorkJS configuration option "defaultflags".
+Default values for all module flags can be defined in the WorkJS configuration.
 
-In the MAP file optional module flags can be  defined as JSON string which must 
-stay in the route line (no line breaks).
+Optional module flags can be defined as JSON string which must stay in the route line (no line breaks allowed).
 Flags can be defined for all methods or separate for each method.
 
-Flag specifications in a route line override defaults from configuration or from a parent module.
+Flag specifications in a route line override defaults from configuration or flags defined in a parent module.
 
 Example:
 ~~~nohighlight
-/static/*       get     www/fileserver {"logAccess":"f", "session":"f"}
-/xxx             *      www/xxx  {"logAccess": {"get": "f", "post": "t"}}
+/static/*       get     www/fileserver {"access":"f", "session":"f"}
+/xxx             *      www/xxx  {"access": {"get": "f", "post": "t"}}
 ~~~
+
+In this example no access logging and no sessions are configured for /static routes and
+access logging is set to true for post and set to false for get requests for /xxx routes.
 
 ## Subsite Modules
 
 If a subsite module is defined in a route map, the urlpath of the parent MAP file
-is prependet to all routes in the subsite MAP. The subsite module is "mounted" 
+is prependet to all routes of the subsite MAP. The subsite module is "mounted" 
 at the given urlpath.
 
-Module flags specified for a subsite route are the defaults for all routes in 
+Module flags specified for a subsite route are the defaults for all routes of 
 the mounted subsite module.

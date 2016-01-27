@@ -44,4 +44,4 @@ authentication middleware - get current user from session and fetch user data fr
 ### work.auth.conf_cache
 Cache outstanding registrations in memory
 
-### Database table: users
+### Database table: work_users

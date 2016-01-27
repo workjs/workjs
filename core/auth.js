@@ -45,12 +45,12 @@ w.auth.logout = function logout(user_id) {
 
 //create hash from string (e.g. password)
 w.auth.hash = function hash(pw) {
-  return w.dependencies.bcrypt.hashSync(pw, w.conf.auth_salt);
+  return w.dep.bcrypt.hashSync(pw, w.conf.auth_salt);
 };
 
 //check if a hash matches a string (password)
 w.auth.check = function check(pw, hash) {
-  return w.dependencies.bcrypt.compareSync(pw, hash);
+  return w.dep.bcrypt.compareSync(pw, hash);
 };
 
 //auth middleware - get current user from session and fetch user data from DB

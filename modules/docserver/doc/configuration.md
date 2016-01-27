@@ -1,74 +1,69 @@
-# WorkJS - Configuration
+# WorkJS - Configuration CONF
 
-The start script of a workJS application contains the basic framework
-configuration and finishes by starting WorkJS:
+The file CONF in a workJS application contains the basic framework configuration. 
+This configurations overrules the default configuration from the workjs package.
 
-```javascript
-// Example app.js
+module.work.rootdir can be used to find the base directory of an application and 
+module.work.coredir is the base directory of the workjs package.
 
-var conf = {};
-conf.name = "Demo";
-conf.port = 3000;  
-conf.rootdir = process.cwd();
+Look into the default configuration (CONF in the workjs package) for the configurable options:
 
-conf.servermode = "DEVELOPMENT";
-//conf.servermode = "PRODUCTION";
+* w.conf.name: give your application a name.
 
-conf.verbs = ["get", "post"];
+* w.conf.port: the port where the server listens
 
-conf.access_logdir = conf.rootdir + "/LOG/access";
-conf.debug_logdir = conf.rootdir + "/LOG/debug";  
-conf.message_logdir = conf.rootdir + "/LOG/debug";
+* w.conf.origin: origin of this site as seen from outside (used to check websocket origin)
 
-conf.db_url = "pg://fp@localhost/work";
-conf.db_poolsize = 20;
-
-conf.uploaddir = conf.rootdir + "/TMP";
-
-conf.session_secrets = ["Top Secret"];
-
-conf.session_update = 60;
-conf.session_decline = 2 * 24 * 60 * 60;
-conf.session_sweep = 120;
-
-require('workJS').run(conf);
-```
-
-* conf.name: give your application a name.
-
-* conf.port: the port where the server listens
-
-* conf.rootdir: the base directory of your application
-
-* conf.servermode: should be "DEVELOPMENT" or "PRODUCTION".
+* w.conf.servermode: should be "DEVELOPMENT" or "PRODUCTION".
 In "DEVELOPMENT" mode changes will reload automatically.
 
-* conf.verbs: the http methods used by the application ("GET", "POST", ..).
+* w.conf.verbs: the http methods used by the application ("GET", "POST", ..).
 
-* conf.access_logdir: location containing the access log files.
+* w.conf.flags: Default flags to use.
+* w.conf.flags.get
+* w.conf.flags.post
+* w.conf.flags.default
 
-* conf.debug_logdir: location containing the debug log files.
+* w.conf.log_access: directory containing the access log files.
+* w.conf.log_debug: directory containing the debug log files.
+* w.conf.log_message: directory containing log files for messages not related to a http request.
 
-* conf.message_logdir: location containing log files for messages not related to a http request.
+* w.conf.db_url: url to access the Postgres database.
 
-* conf.db_url: url to access the Postgres database.
-
-* conf.db_poolsize: poolsize connections are opened to the database.
+* w.conf.db_poolsize: poolsize connections are opened to the database.
 Requests are queued if the application requires more than db_poolsize connections.
 
-* conf.uploaddir: location of files which have been uploaded.
+* w.conf.staticdir: location of static resources
 
-* conf.session_secrets: secrets used to sign session cookies.
+* w.conf.uploaddir: location of files which have been uploaded.
 
-* conf.session_update: time in seconds after which the session access timestamp will
+* w.conf.session_secrets: secrets used to sign session cookies.
+
+* w.conf.session_update: time in seconds after which the session access timestamp will
 be updated in the database.
 
-* conf.session_decline: time in seconds after which a session if not used
+* w.conf.session_decline: time in seconds after which a session if not used
 is assumed to be stale and dropped from databse and session cache.
 
-* conf.session_sweep: time interval to run the sweeper function to clean stale session data
+* w.conf.session_sweep: time interval to run the sweeper function to clean stale session data
 from session cache and database.
 
-* require('workJS').run(conf): use the configuration, start everything and
-begin to process http requests.
+* w.conf.cookiename: the name of the session cookie
 
+* w.conf.auth_salt
+bcrypt hash cost (salt / rounds) - see https://github.com/ncb000gt/node.bcrypt.js
+
+* w.conf.auth_randomUrlSize
+size of the random string sent during registration process
+
+* w.conf.auth_confirmationEmailDelay:
+how long to wait after an activation code is sent before one is sent again [seconds]
+
+* w.conf.auth_confirmationTimeout:
+how long the registration url sent via email remains valid [seconds]
+
+* w.conf.smtp_from: Sender address in mails sent from this server
+
+* w.conf.cr_root: the content repository location in file system
+
+* w.conf.cr_partition: current place to store inside of cr_root

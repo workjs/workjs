@@ -1,5 +1,3 @@
-var Sync = require('syncho');
-
 var w = module.work;
 
 w.session = {};
@@ -16,7 +14,7 @@ w.db.query("create table IF NOT EXISTS work_session " +
 function Session(wrk) {
   this.wrk = wrk;
   this.now = wrk.id;
-  this.session_cookie = new w.dependencies.cookies(wrk.req, wrk.res, w.conf.session_secrets);
+  this.session_cookie = new w.dep.cookies(wrk.req, wrk.res, w.conf.session_secrets);
   this.id = this.session_cookie.get( w.conf.cookiename, { signed: true } );
   if (this.id) { //request contains a valid session_cookie
     if (this.id > 0) { //session with data
@@ -81,7 +79,7 @@ Session.prototype.set = function set(key, value) {
     };
     w.session.cache[this.id] = {id:this.id, last:this.now, data:this.data};
   } else {
-    this.wrk.reply500("no session available to set data");
+    this.wrk.reply5xx(500, "no session available to set data");
   };
 };
 
@@ -97,7 +95,7 @@ w.session.sweeper = setInterval(function sweep_sessions() {
     console.log("............. sweep_sessions ................");
     var now = Date.now();
     var drop = now - w.session.decline;
-    Sync(function sweep() {
+    w.dep.syncho(function sweep() {
       w.db.query("delete from work_session where last<:drop", {drop:drop});
       for (var id in w.session.cache) {
         if (w.session.cache[id].last < drop) { delete w.session.cache[id]; }

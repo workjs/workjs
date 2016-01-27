@@ -16,7 +16,7 @@ module.exports.get = function confirmation(next) {
     
     next();
     
-  } else { this.reply303("/register?mode=expired"); };
+  } else { this.reply3xx(303, "/register?mode=expired"); };
 
 };
 
@@ -34,12 +34,12 @@ module.exports.post = function confirmation(next) {
       var user_id = this.db.only("insert into work_users (email, nick, hash) values (:email, :nick, :hash)"
       +" on CONFLICT (email) DO UPDATE set nick=:nick, hash=:hash"
       +" returning user_id", {email: email, nick: this.context.nick, hash:hash});
-      this.reply303("/login?email="+email);
+      this.reply3xx(303, "/login?email="+email);
     } 
 
   };
   
-  this.reply303("/register?mode=expired");
+  this.reply3xx(303, "/register?mode=expired");
 
 };
   

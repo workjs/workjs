@@ -1,5 +1,3 @@
-var mkdirp = module.require('mkdirp');
-var fs = require('fs');
 
 require('./auth.js');
 var w = module.work;
@@ -31,7 +29,7 @@ w.REPO = function repo(cr_root, cr_partition) {
   this.cr_partition = cr_partition;
 
   var cr_path = cr_root + '/' + cr_partition + '/';
-  mkdirp.sync(cr_path, null);
+  w.dep.mkdirp.sync(cr_path, null);
   var cr = this;
   
   //put a single file into the content store
@@ -41,7 +39,7 @@ w.REPO = function repo(cr_root, cr_partition) {
     var d = new Date();
     var datepart = d.getFullYear()+"/"+(d.getMonth()+1)+"/"+d.getDate()+"/";
     var cr_location = this.cr_partition + '/' + datepart + file.file_id;
-    mkdirp.sync(cr_path + datepart);
+    w.dep.mkdirp.sync(cr_path + datepart);
     
     //first check if file already present in store
     var stock_id = w.db.only("select stock_id from work_storage " +
@@ -49,14 +47,14 @@ w.REPO = function repo(cr_root, cr_partition) {
       {file_size:file.size, md5:file.md5});
     if (stock_id) {
       //discard the new copy
-      fs.unlinkSync(file.path); }
+      w.dep.fs.unlinkSync(file.path); }
     else {
       //move new file into store
       stock_id = w.db.only("insert into work_storage (file_size, md5, location) " +
         "VALUES (:file_size, :md5, :location) " +
         "RETURNING stock_id;",
         {file_size:file.size, md5:file.md5, location:cr_location});
-      fs.renameSync(file.path, cr_path + datepart + file.file_id);
+      w.dep.fs.renameSync(file.path, cr_path + datepart + file.file_id);
     };
 
     return stock_id
@@ -106,3 +104,6 @@ w.crx.prototype = new w.REPO(w.conf.cr_root, w.conf.cr_partition);
 
 //create the cr in global work context
 w.cr = new w.crx(w);
+
+
+//Object.defineProperty(Work.prototype, "cr", {get: function() { return new module.work.crx(this); }});

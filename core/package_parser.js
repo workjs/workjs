@@ -1,8 +1,3 @@
-var path = module.require('path');
-var fs = module.require('fs');
-var chokidar = require('chokidar');
-var resolve = require('resolve');
-
 var w = module.work;
 
 //watch for change in map for autoreload in development mode
@@ -18,7 +13,7 @@ function reload() {
 function parse() {
   for (var i = 0; i<w.verbs.length; ++i) {
     var verb = w.verbs[i];
-    var flags = w.flags[verb] || w.defaultflags;
+    var flags = w.flags[verb];
 
     w.map[verb] = new MAPnode();
     pass1(verb, w.coredir, '', flags);
@@ -38,7 +33,7 @@ function parse() {
       + w.rootdir+"/.git|"
       + w.rootdir+"/core";
       var re = new RegExp(ignorepath);
-      w.packages[pkgname].watcher = chokidar
+      w.packages[pkgname].watcher = w.dep.chokidar
       .watch('.', {cwd:dirname, ignored:re, ignoreInitial:true})
       .on('add', function(event, path) { reload(); })
       .on('change', function(path) { console.log("change ....", path); reload(); })
@@ -54,6 +49,9 @@ function MAPnode(){
     this.target = null;
     this.flags = {};
 ///    this.modules = [];
+
+    //slot for a ws controller
+    this.ws = null;
 
     this.branches = {};
     this.varname = null;
@@ -127,21 +125,21 @@ function add_to_route_map(urlpath, verb, target, flags, pkg, urlprefix) {
 function pass1(verb, dirname, urlprefix, preflags) {
   //console.log('PASS1 in '+dirname, verb, preflags);
   //get package information
-  var package_json = path.join(dirname, 'package.json');
-  var pkg = JSON.parse(fs.readFileSync(package_json).toString());
+  var package_json = w.dep.path.join(dirname, 'package.json');
+  var pkg = JSON.parse(w.dep.fs.readFileSync(package_json).toString());
   pkg.dirname = dirname;
   pkg.templating = module.require('./templating.js')({
     searchpaths: [dirname, dirname+'/LAYOUT', w.rootdir+'/LAYOUT', w.coredir+'/LAYOUT']
   });
   
   var mapfile = pkg.dirname + '/MAP';
-  if (!fs.existsSync(mapfile)) return;
+  if (!w.dep.fs.existsSync(mapfile)) return;
   
   //store for developer support and watch
   w.packages[pkg.name] = pkg;
   
   //parse mapfile
-  var mf = fs.readFileSync(mapfile).toString().split('\n');
+  var mf = w.dep.fs.readFileSync(mapfile).toString().split('\n');
   mf.forEach( function parse(line) {
     if (line[0] === '#' || !/\S/.test(line)) return;
     
@@ -188,7 +186,7 @@ function pass1(verb, dirname, urlprefix, preflags) {
         var pkgname = "." + pkgname;
       } else var basedir = pkg.dirname;
       try {
-        pkgdirname = path.dirname(resolve.sync(pkgname, { basedir: basedir }));
+        pkgdirname = w.dep.path.dirname(w.dep.resolve.sync(pkgname, { basedir: basedir }));
       } catch (e) {
         w.log('INVALID package ref in: ' + dirname + " >> " + line);
         w.log('ERROR parsing mapfile "' + mapfile + '": '+ e.message);
@@ -206,8 +204,8 @@ function build_handler(n) {
   if (n.target) {
     var has_DB = false;
     var h = []; //list of functions (modules, controller, view) for this handler
-    if (n.flags["access"]) h.push(w.logger.access);
-    if (n.flags["debug"]) h.push(w.logger.debug);
+    if (n.flags["access"]) h.push(w.mw.alogger);
+    if (n.flags["debug"]) h.push(w.mw.dlogger);
     if (n.flags["formData"]) h.push(w.mw.body_parser);
     if (n.flags["dbCommit"]) h.push(w.dbm.commit);
     if (n.flags["dbRollback"]) h.push(w.dbm.rollback);
@@ -215,16 +213,18 @@ function build_handler(n) {
       w.log('WARNING dbRollback AND dbCommit in ' + n.verb+' '+n.urlpath);
     if (n.flags["session"]) h.push(w.session.mw);
     if (n.flags["auth"]) if (n.flags["session"]) h.push(w.auth.mw) 
-      else { h.push(w.session.mw); h.push(w.auth.mw); }
+                         else { h.push(w.session.mw); h.push(w.auth.mw); };
+    if (n.flags["ws"]) {
+      h.push(w.ws_mw);
+    };
 
     //if null target -> we are finished
     if (n.target === '=') {
       n.handler = null;
     } else {
+ 
       var c_path = n.pkg.dirname+'/'+n.target+".js";
-      var v_path = n.pkg.dirname+'/'+n.target+"."+n.verb;
-
-      if (fs.existsSync(c_path)) {
+      if (w.dep.fs.existsSync(c_path)) {
         //console.log("look for controller: ", c_path);
         try { var c = module.work_require(c_path)[n.verb];
           //if (c) console.log("found!");
@@ -243,7 +243,8 @@ function build_handler(n) {
         };
       };
       
-      if (fs.existsSync(v_path)) {
+      var v_path = n.pkg.dirname+'/'+n.target+"."+n.verb;
+      if (w.dep.fs.existsSync(v_path)) {
         try {
           var v = n.pkg.templating.compile(v_path);
           if (v) h.push(function render_template(next) {
@@ -262,6 +263,16 @@ function build_handler(n) {
       else { 
         console.log("#### NO controller and NO view found for: "+n.verb+' '+n.urlpath+' -> '+n.taget);
         n.handler = function(){ if (!this.res.headersSent) { this.end(); }; };
+      };
+      
+      //check for ws handler
+      var ws_path = n.pkg.dirname+'/'+n.target+".ws";
+      if (w.dep.fs.existsSync(ws_path)) {
+        try { n.ws = module.work_require(ws_path);
+        } catch (e) {
+          w.log('ERROR in WS handler: '+ws_path);
+          w.log(e);
+        };
       };
     };
   };

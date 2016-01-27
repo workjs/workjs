@@ -9,10 +9,10 @@
 <div style="float:right;border:1px solid;background:#ff8;padding:1em;margin:1em;">
 Contents:
 <li><a href=".">Quick Start</a>
-<li><a href="construction.md">Construction</a>
+<li><a href="basics.md">WorkJS Basics</a>
 <li><a href="configuration.md">Configuration</a>
-<li><a href="basics.md">Basics</a>
 <li><a href="map.md">The MAP</a>
+<li><a href="context.md">Work Context</a>
 <li><a href="postgres.md">Postgres</a>
 <li><a href="logger.md">Logger</a>
 <li><a href="sessions.md">Sessions</a>
@@ -22,7 +22,7 @@ Contents:
 <li><a href="ds.md">Developer Support</a>
 <li><a href="utilities.md">Utilities</a>
 <li><a href="repo.md">Content Repository</a>
+<li><a href="ws.md">WebSockets</a>
 </div>
 {{ md|safe }}
 {% endblock %}
-
