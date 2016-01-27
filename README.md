@@ -30,15 +30,16 @@ PostgreSQL installation: http://www.postgresql.org/download/linux/
 How to install PostgreSQL 9.5 on Ubuntu/Debian/Linux Mint: http://raonyguimaraes.com/installing-postgresql-9-5-on-linux/
 
 For a quick start install the WorkJS package and start the "workshow" demo application.
-Edit app.js to match your PostgreSQL server and database name.
+Edit CONF to match your PostgreSQL server and database name.
 Start the application.
 
 ~~~bash
+[sudo] npm cache clean
 [sudo] npm install -g workjs
 workjs -c workshop
 cd workshop
+vi CONF
 npm install
-vi app.js
 npm start
 ~~~
 
