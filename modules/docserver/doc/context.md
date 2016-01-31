@@ -1,4 +1,4 @@
-# WorkJS Basics
+# WorkJS Context
 
 To create a new application, you must write a map file and implement request handler functions and templates.
 The WorkJS API is attached to the global module.work and to the "this" context of the handler functions.

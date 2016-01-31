@@ -61,7 +61,7 @@ function MAPnode(){
 };
 
 function add_to_route_map(urlpath, verb, target, flags, pkg, urlprefix) {
-//  console.log(">>>", pkg.name, verb, urlpath, target, urlprefix);
+  console.log(">>>", pkg.name, verb, urlpath, target, urlprefix);
   var n = w.map[verb];
   var p = urlpath.split('/');
   
@@ -132,6 +132,9 @@ function pass1(verb, dirname, urlprefix, preflags) {
     searchpaths: [dirname, dirname+'/LAYOUT', w.rootdir+'/LAYOUT', w.coredir+'/LAYOUT']
   });
   
+  //run pkg init
+  console.log("Load Package:", pkg.dirname, pkg.main);
+  require(pkg.dirname);
   var mapfile = pkg.dirname + '/MAP';
   if (!w.dep.fs.existsSync(mapfile)) return;
   
