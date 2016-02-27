@@ -1,6 +1,10 @@
 var w = module.work;
 
 module.exports.get = function get_map(next) {
-  this.context.x = w.util.inspect(w);
+  const x = {};
+  Object.keys(w).sort().forEach(function(key) {
+    x[key] = w[key];
+  });
+  this.context.x = w.util.inspect(x);
   next();
 };

@@ -64,3 +64,6 @@ URL: /user/1735/put/12a
 
 This will result in this.context = {user_id:'1735', key:'12a'}
 
+### caches
+
+Local caches can be put into w.cache and are also available at this.cache.

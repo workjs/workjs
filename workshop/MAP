@@ -3,6 +3,7 @@
 
 @	*	:./modules/users	{"auth":"t"}
 
+/chat	*	:./modules/chat
 #/admin/users	* :/modules/users	{"debug":"t", "auth":"t"}
 
 #/login	*	www/login

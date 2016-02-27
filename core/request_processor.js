@@ -4,18 +4,18 @@ var DEVELOPMENT = (module.work.conf.servermode == "DEVELOPMENT");
 w.httpserver = module.require('http').Server(listener);
 w.httpserver.listen(w.conf.port);
 
-w.wsserver = require('./work-socket.js').server(w.httpserver);
+require('./work-socket.js').server(w.httpserver);
 
 //////////////////////////////////////////////////////////////
 // listener uses syncho to run each request in a fiber
 
 function listener(req, res) {
   //req.setEncoding('utf8');
-  var work = w.newRequestContext(req, res);
   w.dep.syncho(function request_handler() {
-      route.call(work);
-      if (work.error) {
-        var e = work.error;
+      var context = w.newRequestContext(req, res);
+      route.call(context);
+      if (context.error) {
+        var e = context.error;
         w.log("ERROR " + e.message + "\n\n" + e.stack);
         if (!res.headersSent) {
           var status = e.status || 500;
@@ -42,14 +42,15 @@ function listener(req, res) {
 //////////////////////////////////////////////////////////////
 // router runs in the "Work" object context
 
-var url = require('url');
-
 function route() {
-  var n = w.map[this.req.method.toLowerCase()];
+  this.method = this.req.method.toLowerCase();
+  var n = w.map[this.method];
   if (!n) { return this.reply4xx(404, "no route for method: "+this.req.method); };
   
-  this.url = url.parse(this.req.url, true);
-  this.context = this.query = this.url.query || {};
+  this.url = w.dep.url.parse(this.req.url, true);
+  this.query = this.url.query || {};
+  this.context = {};
+  for (var e in this.query) { this.context[e] = this.query[e] }
   this.context._work = this;
   this.context._js = [];
   this.context._css = [];

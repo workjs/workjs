@@ -10,6 +10,7 @@ Developer Support:
 <li><a href="this">"This" Context Object</a>
 <li><a href="cookies">List Cookies</a>
 <li><a href="session">Session Status</a>
+<li><a href="caches">Caches</a>
 <li><a href="/doc/">WorkJS Documentation</a>
 </ul>
 {% endblock %}

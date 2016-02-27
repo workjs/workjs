@@ -1,0 +1,61 @@
+{% extends "master.html" %}
+
+{% block script %}
+$(function() {
+  $("#chat-color").val(localStorage.getItem("chat-color"));
+  enable();
+  $("#chat-name").on("change", change_name);
+  $("#chat-color").on("change", change_color);
+  $("#newchat").on("click", newChat);
+  $("input:radio[value=public]").on("change", function() { if (this.checked){ $("p.pw").css("visibility","hidden"); }; });
+  $("input:radio[value=private]").on("change", function() { if (this.checked){ $("p.pw").css("visibility","visible"); }; });
+  $("#go").on("click", go);
+});
+
+function change_name(){
+  localStorage.setItem("chat-name", this.value);
+  enable();
+};
+
+function change_color(){
+  console.log("huhu", this.value);
+  localStorage.setItem("chat-color", this.value);
+};
+
+function enable(){
+  if (localStorage.getItem("chat-name")) {
+    $("#chat-name").val(localStorage.getItem("chat-name"));
+    $("#newchat, #chatkey").prop("disabled", false);
+  } else {
+    $("#chat-name").val("");
+    $("#newchat, #chatkey").prop("disabled", true);
+  };
+};
+
+function newChat(){
+    $("div.dialog").dialog({modal:true, width:400});
+};
+
+function go(){
+  window.location.href = $("#chatkey").val();
+};
+
+{% endblock %}
+
+{% block content %}
+<h1>WorkJS Chat</h1>
+<h3>my chat name: <input id="chat-name" size="15" required></h3>
+<h3>my color: <input id="chat-color" type="color"></h3>
+<h3>Create a new chat: <button id="newchat">New Chat</button></h3>
+or
+<h3>Enter a chat key: <input id="chatkey" value="{{k|safe}}"> <button id="go">GO!</button></h3>
+
+<div class="dialog" title="Create New Chat" style="display:none"><form method="post">
+<p>Title: <input name='title'></p>
+<p><input class='public' type='radio' name='mode' value='public' checked>public
+<input class='private' type='radio' name='mode' value='private'>private</p>
+<p class='pw' style='visibility:hidden'>Codeword: <input name='pw' size="15"></p>
+<p><button class='create'>Create</button>
+</form>
+</div>
+{% endblock %}

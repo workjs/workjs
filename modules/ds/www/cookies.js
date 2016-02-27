@@ -1,7 +1,7 @@
 var util = require('util');
 
 var w = module.work;
-var Cookies = w.dependencies.cookies;
+var Cookies = w.dep.cookies;
 
 module.exports.get = function cookies(next) {
   var c = new Cookies( this.req, this.res, w.conf.session_secrets );

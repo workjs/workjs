@@ -1,0 +1,4 @@
+
+@	*	home
+/:key	get	chat {"ws":"t"}
+/setup	*	setup

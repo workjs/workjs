@@ -25,7 +25,10 @@ w.dep.resolve = module.require('resolve');
 w.dep.send = require('send');
 w.dep.syncho = require('syncho');
 
+w.dep.url = require('url');
 w.dep.util = require('util');
+
+w.dep.ws = require('ws');
 
 //////////////////////////////////
 

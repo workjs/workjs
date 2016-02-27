@@ -44,6 +44,7 @@ function parse() {
 
 //a node in our route map tree
 function MAPnode(){
+    this.id = null;
     this.urlpath = null;
     this.verb = null;
     this.target = null;
@@ -113,6 +114,7 @@ function add_to_route_map(urlpath, verb, target, flags, pkg, urlprefix) {
     n = n.branches[segment] = new MAPnode();
   };
   
+  n.id = w.unique();
   n.target = target;
   n.verb = verb;
   n.urlpath = urlpath;
@@ -205,7 +207,7 @@ function pass1(verb, dirname, urlprefix, preflags) {
 function build_handler(n) {
   var util = require('util');
   if (n.target) {
-    var has_DB = false;
+//    var has_DB = false;
     var h = []; //list of functions (modules, controller, view) for this handler
     if (n.flags["access"]) h.push(w.mw.alogger);
     if (n.flags["debug"]) h.push(w.mw.dlogger);
@@ -219,6 +221,8 @@ function build_handler(n) {
                          else { h.push(w.session.mw); h.push(w.auth.mw); };
     if (n.flags["ws"]) {
       h.push(w.ws_mw);
+      w.ws_nodes[n.id] = {};
+      console.log("load WS server for ", n.verb, n.urlpath);
     };
 
     //if null target -> we are finished
@@ -275,6 +279,7 @@ function build_handler(n) {
         } catch (e) {
           w.log('ERROR in WS handler: '+ws_path);
           w.log(e);
+          w.log(e.stack);
         };
       };
     };

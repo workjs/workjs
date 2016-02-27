@@ -18,6 +18,7 @@ module.exports = function(options) {
     });
     db.stock(client);
   };
+  w.proto.db = db;
   return { db:db, rollback:rollback, commit:commit };
 };
 
@@ -196,13 +197,15 @@ function commit(next) {
 
 
 //helper functions
-function sqlparser() {
+function sqlparser(params) {
   var i = 0;
   var p = [];
 
   this.next=function(match){
-    p.push(match.substr(1));
-    return "$"+ ++i
+    if (params.hasOwnProperty(match.substr(1))) {
+      p.push(match.substr(1));
+      return "$"+ ++i
+    } else { return match }
   };
 
   this.param=function(){ return(p); };

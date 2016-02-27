@@ -1,10 +1,11 @@
 //this is the WorkJS context prototype
-var Module = require('module');
 
-var w = module.work;
+const w = module.work;
 
 //this is the prototype shared by all contexts
 w.proto.conf = w.conf;
+
+w.proto.cache = w.cache;
 
 w.proto.dep = w.dep;
 w.proto.DEVELOPMENT = (w.conf.servermode == "DEVELOPMENT");
@@ -125,3 +126,26 @@ w.proto.newRequestContext = function newRequestContext(req, res) {
 // WebSocket prototype
 
 var wsProto = Object.create(w.proto);
+
+wsProto.sendJSON = function(o){
+  console.log("wsProto.sendJSON");
+  if (this.ws.readyState === 1) this.ws.send(JSON.stringify(o));
+};
+
+wsProto.emit = function emit(event, params) {
+  console.log("wsProto.emit", event, params);
+  const members = w.ws_nodes[this.n.id][this.group_id];
+  console.log("wsProto.emit this.n.id", this.n.id, "this.group", this.group_id);
+//  console.log("wsProto.emit to:", members);
+  for (o in members) members[o].sendJSON([event, params]);
+};
+
+w.proto.newWSContext = function newWSContext(ws) {
+  var context = Object.create(wsProto);
+  context.ws = ws;
+  context.id = w.unique();
+  context.n = null;
+  context.group = null;
+  context.sess = null;
+  return context
+};

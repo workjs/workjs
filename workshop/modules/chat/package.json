@@ -1,0 +1,11 @@
+{
+  "name": "work-chat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WorkJS Websocket Chat",
+  "keywords": ["workjs", "websocket", "chat", "example"],
+  "main": "init.js",
+  "engines": { "node": "^5.4.0" },
+  "author": { "name": "Franz Penz" },
+  "license": "MIT"
+}

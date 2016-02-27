@@ -2,11 +2,11 @@
 
 {% block head %}
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.8.0/styles/default.min.css">
-<style>pre {background:#ffffbb;}</style>
+<style>pre {background:#88fffa;}</style>
 {% endblock %}
 
 {% block content %}
-<div style="float:right;border:1px solid;background:#ff8;padding:1em;margin:1em;">
+<div style="float:right;border:1px solid;background:#88fffa;padding:1em;margin:1em;">
 Contents:
 <li><a href=".">Quick Start</a>
 <li><a href="basics.md">WorkJS Basics</a>

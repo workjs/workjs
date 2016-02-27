@@ -12,4 +12,6 @@
 /cookies *	www/cookies
 /session get	www/session
 
+/caches get	www/caches
+
 /plain/* get	www/plain

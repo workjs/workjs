@@ -1,18 +1,20 @@
 //global.work = {};
 
 //init global work object
-var Module = require('module');
+const Module = require('module');
 
 //create context prototype
-var context = {};
-context.proto = context;
+const context = {};
+//context.proto = context;
 
-var w = Module.prototype.work = Object.create(context);
+//create global work context
+const w = Module.prototype.work = Object.create(context);
+w.proto = context;
 
 require("./dependencies.js");
 
 w.mw = {};
-w.caches = {};
+w.cache = {};
 
 //work_require for autoreload in development mode defaults to require
 Module.prototype.work_require = Module.prototype.require;

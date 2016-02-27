@@ -1,0 +1,123 @@
+{% extends "master.html" %}
+
+{% block head %}
+<style>
+#my_name {border-radius:0.5em;cursor:pointer;padding:0.5em 1em;border:2px solid;}
+#my_name:hover {border:2px outset;}
+#members div {border:2px solid;background:white;margin:0.2em;}
+#chatlog div.info {margin:0;font-size:x-small}
+#chatlog>div {display:inline-block;padding:0.5em;border:2px solid grey;margin:0.1em;
+  border-radius:1em;background:white;}
+#chatlog div.my {margin-left:2em;}
+</style>
+{% endblock -%}
+
+{% block script %}
+var ws=null;
+var my_name = localStorage.getItem("chat-name");
+var my_color = localStorage.getItem("chat-color") || "#000";
+var my_id = localStorage.getItem("chat-id") || 0;
+
+$(function() {
+  $("#url").html(window.location.href);
+  ws = new worksocket({ onopen:open });
+
+  ws.on("join", join);
+  ws.on("leave", leave);
+  ws.on("message", message);
+  
+  $("#say").on("change", say_change);
+
+/*
+  if (my_name) {
+    $("#say").before("<button id='my_name'>"+my_name+"</button>: ");
+  } else {
+    this.location.href="setup?k={{ key|safe }}";
+  }
+*/
+  $("#my_name").on("click", my_name_dialog);
+  $("#my_name").css("border-color", my_color);
+  $("body").on("click", "#my_name_ok", my_name_ok);
+});
+
+function open(p){
+  if (my_id){ start(); }
+  else { ws.rpc("get_id", function(r){ my_id=r; start(); }); };
+};
+
+function start(){
+  ws.rpc("start", [my_id, my_name, my_color], startdata);
+};
+
+function join(p){
+  const member = $('#_'+p[0]);
+  const newmem = "<div id='_"+p[0]+"' style='border-color:"+p[2]+"'>"+p[1]+"</div>"
+  if (member.length == 0){ $("#members").append(newmem); }
+  else { member.replaceWith(newmem); }
+  $("._"+p[0]).css("border-color", p[2]);
+};
+
+function startdata(p){
+  const members = p[0];
+  const msgs = p[1];
+  for (var id in members) { var x = members[id]; join([id, x[0], x[1]]); }
+  for (var m in msgs.reverse()) {
+    var l = msgs[m];
+    console.log('$("#_"+l.pers_id).css("border-color");', l.pers_id);
+    var color = $("#_"+l.pers_id).css("border-color");
+    console.log(color);
+    chatAppend([l.pers_id, l.pers_name, color, l.date, l.message]);
+  }
+};
+
+function leave(p){
+  $("#_"+p).remove();
+};
+
+function say_change(){
+  ws.rpc("say", this.value);
+  $(this).val("");
+};
+
+function message(p){
+  chatAppend(p)
+};
+
+function chatAppend(p){
+  if (p[0]==my_id) { var cl = "my _"+p[0] } else { var cl = "other _"+p[0] };
+  $("#chatlog").prepend("<div style='border-color:"+p[2]+"'class='"+cl+"'><div class='info'>"+p[1]+" ("+p[3]+")</div>" +
+                        "<div class='msg'>"+p[4]+"</div></div><br>");
+};
+
+function my_name_ok(){
+  my_color = $("#my_name_dialog_color").val();
+  localStorage.setItem("chat-color", my_color);
+  $("#my_name").css("border-color", my_color);
+  var dname = $("#my_name_dialog_name").val();
+  if (dname){
+    my_name = dname;
+    localStorage.setItem("chat-name", my_name);
+    $("#my_name").html(my_name);
+  }
+  $('#my_name_dialog').dialog('destroy');
+};
+
+function my_name_dialog(){
+  $("<div id='my_name_dialog'><input id='my_name_dialog_color' type='color' value='"+my_color+"'> " +
+    "<input id='my_name_dialog_name' type='text' value='"+my_name+"'> " +
+    "<button id='my_name_ok'>OK</button></div>")
+  .dialog({modal:true, width:400, title:'my name & color setup'});
+};
+
+{% endblock %}
+
+{% block content %}
+<div id="members" style="float:right;">Members:</div>
+<a href="setup?k={{key}}">Chat Setup</a>
+<h3 id="url"></h3>
+{{ id }} 
+<h1>{{group.title}}</h1>
+<input id="say" size="80">
+
+<div id="chatlog"></div>
+{% endblock %}
