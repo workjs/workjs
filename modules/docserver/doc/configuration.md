@@ -3,8 +3,8 @@
 The file CONF in a workJS application contains the basic framework configuration. 
 This configurations overrules the default configuration from the workjs package.
 
-module.work.rootdir can be used to find the base directory of an application and 
-module.work.coredir is the base directory of the workjs package.
+w.rootdir can be used to find the base directory of an application and 
+w.coredir is the base directory of the workjs package.
 
 Look into the default configuration (CONF in the workjs package) for the configurable options:
 

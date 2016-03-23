@@ -1,7 +1,5 @@
-var util = require('util');
-var dateformat=require("dateformat");
-
-var w = module.work;
+var util = w.dep.util;
+var dateformat = w.dep.dateformat;
 
 module.exports.get = function get(next) {
   var tab = [];

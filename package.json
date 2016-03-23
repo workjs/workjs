@@ -1,6 +1,6 @@
 {
   "name": "workjs",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "description": "WorkJS Web Application Framework",
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
     "nodemailer": "^1.10.0",
     "nunjucks": "github:mozilla/nunjucks",
     "pg": "^4.3.0",
+    "pg-native": "*",
     "resolve": "*",
     "send": "^0.12.3",
     "syncho": "*",

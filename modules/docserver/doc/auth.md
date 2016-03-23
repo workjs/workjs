@@ -22,10 +22,10 @@ see [bcrypt](https://github.com/ncb000gt/node.bcrypt.js)
 ### this.auth.username
 currently logged in user
 
-### work.auth.hash(pw)
+### w.auth.hash(pw)
 create hash from password string
 
-### work.auth.check(pw, hash)
+### w.auth.check(pw, hash)
 check if a hash matches a password string
 
 ### this.auth.login(user)
@@ -35,13 +35,13 @@ user is an object containing the data of the user (see database table below).
 ### this.auth.logout()
 log out the current user, clear the session
 
-### work.auth.logout(user_id)
+### w.auth.logout(user_id)
 log out user with user_id, clear the matching session
 
-### work.auth.mw(next)
+### w.auth.mw(next)
 authentication middleware - get current user from session and fetch user data from DB
 
-### work.auth.conf_cache
+### w.auth.conf_cache
 Cache outstanding registrations in memory
 
 ### Database table: work_users

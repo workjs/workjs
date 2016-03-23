@@ -1,6 +1,3 @@
-var util = require('util');
-
-var w = module.work;
 
 module.exports.get = function caches(next) {
   
@@ -14,7 +11,7 @@ theObjs.push(this.cache);
 while (theObjs.length > thePrs.length) { thePrs[i] = render(theObjs[i], i); i++ };
 
 this.context.r = thePrs;
-this.context.r = util.inspect(thePrs, {depth:10});
+this.context.r = w.dep.util.inspect(thePrs, {depth:10});
 
 function render(obj, nr) {
   console.log("render .......", nr);

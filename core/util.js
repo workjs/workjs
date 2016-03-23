@@ -1,6 +1,5 @@
 var util = require('util');
 
-var w = module.work;
 w.util = {};
 
 w.util.inspect = function inspect(obj) {

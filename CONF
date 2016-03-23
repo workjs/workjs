@@ -1,4 +1,5 @@
-var w = module.work;
+
+w.conf = {work_doc: `Server configuration from WorkJS core and your application.`}
 
 w.conf.name = "WorkJS Default Application";
 w.conf.port = 3000;
@@ -27,7 +28,9 @@ w.conf.log_access = w.rootdir + "/LOG/access";
 w.conf.log_debug = w.rootdir + "/LOG/debug";
 w.conf.log_message = w.rootdir + "/LOG/debug";
 
-w.conf.db_url = "pg://fp@localhost/work";
+//http://www.postgresql.org/docs/9.5/static/libpq-connect.html#LIBPQ-CONNSTRING
+//w.conf.db_url = "pg://fp@localhost/work";
+w.conf.db_url = "postgresql://fp@localhost/work";
 w.conf.db_poolsize = 20;
 
 w.conf.staticdir = w.coredir + "/STATIC";

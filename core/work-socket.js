@@ -1,4 +1,3 @@
-var w = module.work;
 w.ws_nodes = {};
 
 function verifyClient(info) {

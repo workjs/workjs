@@ -7,13 +7,8 @@ module.exports = function(options) {
 
   var db = new DB();
   for (var i = 1; i <= poolsize; i++) {
-    var client = new w.dep.pgClient(dburl);
-    client.connect(function(err){
-      if (err){
-        console.log("ERR cannot create DB Client ("+i+") for: "+dburl+" <"+err+">");
-        process.exit(1);
-      };
-    });
+    var client = new w.dep.pg_native();
+    client.connectSync(dburl);
     db.stock(client);
   };
   w.proto.db = db;
@@ -50,60 +45,40 @@ function DB() {
   function TX(){
     var tx = this;
     var my_client = null;
-    var start_arg0 = null;
-    var start_arg1;
-    var start_arg2;
-
+    var startCB;
+    
+    this.enqueue = function(cb) {
+      startCB = cb;
+      dbm.enqueue(tx);
+    };
+    
     this.start = function(client) { //we got a client -> start this transaction
-      //start_arg1 or start_arg2 could be a callback
       my_client = client;
-      my_client.query("BEGIN");
-      my_client.query(start_arg0, start_arg1, start_arg2);
+      startCB();
     };
     
-    this.pg_query = function(arg0, arg1, cb) {
-        if (start_arg0) {
-          my_client.query.call(my_client, arg0, arg1, cb);
-        } else {
-          start_arg0 = arg0;
-          start_arg1 = arg1;
-          start_arg2 = cb;
-          dbm.enqueue(tx);
-        }
-    };
-    
-    this.pg_query_sync = function(arg0, arg1) {
-      return(tx.pg_query.sync(tx, arg0, arg1));
-    };
-
-    this.commit = function(cb) {
-      if (start_arg0) {
-        my_client.query("COMMIT", function(e){
-          dbm.stock(my_client);
-          cb && cb(e);
-        });
-      } else {
-        cb && cb();
+    this.queryPG = function(qt, pa) {
+      console.log("this.queryPG", qt);
+      if (my_client) { return my_client.querySync(qt, pa); }
+      else {
+        this.enqueue.sync(null);
+        my_client.querySync("BEGIN");
+        return my_client.querySync(qt, pa);
       };
     };
-    
-    this.commit_sync = function() {
-      return(tx.commit.sync(tx));
-    };
 
-    this.rollback = function(cb) {
-      if (start_arg0) {
-        my_client.query("ROLLBACK", function(e){
-          dbm.stock(my_client);
-          cb && cb(e);
-        });
-      } else {
-        cb && cb();
+    this.commit = function() {
+      if (my_client) {
+        my_client.querySync("COMMIT");
+        dbm.stock(my_client);
       };
     };
-    
-    this.rollback_sync = function() {
-      return(tx.rollback.sync(tx));
+
+    this.rollback = function() {
+      if (my_client) {
+        my_client.querySync("ROLLBACK");
+        dbm.stock(my_client);
+      };
     };
     
     this.query = function query(sql, param) {
@@ -121,7 +96,7 @@ function DB() {
       for (var i=0; i<p.length; i++) {
         q.push(param[p[i]]);
       };
-      try { var r =  this.pg_query_sync.call(this, r, q); } catch (e) {
+      try { var r = this.queryPG(r, q); } catch (e) {
         w.log("ERROR in SQL query", e.toString(), "SQL:" + r, "Param:" + q);
         w.log(new Error().stack);
         return null;
@@ -129,22 +104,20 @@ function DB() {
       return r;
     };
     
-    this.rows = function rows(sql, param) {
-      return(this.query(sql, param).rows);
-    };
+    this.rows = this.query;
     
     this.one = function one(sql, param) {
-      return(this.query(sql, param).rows[0]);
+      return(this.query(sql, param)[0]);
     };
     
     this.only = function only(sql, param) {
-      var one = this.query(sql, param).rows[0];
+      var one = this.query(sql, param)[0];
       if (one) { return(one[Object.keys(one)[0]]); }
       else return(null);
     };
     
     this.each = function each(sql, param, fn) {
-      var r = this.query(sql, param).rows;
+      var r = this.query(sql, param);
       for (var i = 0; i < r.length; i++) { fn(r[i]); };
     };
     
@@ -154,26 +127,24 @@ function DB() {
   this.query = function query(sql, param) {
     var tx = dbm.begin();
     var r = tx.query(sql, param);
-    tx.commit_sync();
+    tx.commit();
     return r;
   };
   
-  this.rows = function rows(sql, param) {
-    return(dbm.query(sql, param).rows);
-  };
+  this.rows = this.query;
   
   this.one = function one(sql, param) {
-    return(dbm.query(sql, param).rows[0]);
+    return(dbm.query(sql, param)[0]);
   };
   
   this.only = function only(sql, param) {
-    var one = dbm.query(sql, param).rows[0];
+    var one = dbm.query(sql, param)[0];
     if (one) { return(one[Object.keys(one)[0]]); }
     else return(null);
   };
   
   this.each = function each(sql, param, fn) {
-    var r = dbm.query(sql, param).rows;
+    var r = dbm.query(sql, param);
     for (var i = 0; i < r.length; i++) { fn(r[i]); };
   };
   
@@ -181,16 +152,16 @@ function DB() {
 
 //middlewares
 function rollback(next) {
-      this.db = this.work.db.begin();
+      this.tx = w.db.begin();
       next();
-      this.db.rollback_sync();
+      this.tx.rollback();
 };
 
 function commit(next) {
-      this.db = this.work.db.begin();
+      this.tx = w.db.begin();
       next();
-      if (this.error) { this.db.rollback_sync(); }
-      else { this.db.commit_sync(); }
+      if (this.error) { this.tx.rollback(); }
+      else { this.tx.commit(); }
 };
 
 

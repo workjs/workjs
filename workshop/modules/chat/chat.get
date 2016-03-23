@@ -42,7 +42,10 @@ $(function() {
 
 function open(p){
   if (my_id){ start(); }
-  else { ws.rpc("get_id", function(r){ my_id=r; start(); }); };
+  else { ws.rpc("get_id", null, function(r){
+    localStorage.setItem("chat-id", r);
+    my_id=r; start(); });
+  };
 };
 
 function start(){

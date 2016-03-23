@@ -1,6 +1,3 @@
-var util = require('util');
-
-var w = module.work;
 
 module.exports.post = function post(next) {
   this.context.x = w.util.inspect(this.context);
@@ -8,7 +5,7 @@ module.exports.post = function post(next) {
   var r = function(str){
     return(eval(str));
   }.call(this,this.context.code);
-    this.context.r = util.inspect(r);
+    this.context.r = w.dep.util.inspect(r);
   } catch (e) { this.context.r = e + "\n\n" + e.stack};
   next();
 };

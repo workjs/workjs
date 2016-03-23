@@ -1,3 +1,2 @@
-var w = module.work;
 
 w.conf.name = "WorkJS Workshop Demp Application";

@@ -14,7 +14,7 @@ $(function() { work_inspect("#obj", {{ x|safe }}); });
 <h1>ds: Work Object</h1>
 The Work Object is attached to the global module structure.
 
-module.work =
+global.w =
 <div id="obj"></div>
 
 {% endblock %}

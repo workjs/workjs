@@ -1,4 +1,3 @@
-var w = module.work;
 
 var alogdir = w.conf.log_access + '/';
 w.dep.mkdirp.sync(alogdir, null);
@@ -59,6 +58,8 @@ w.proto.log = function log() {
       };
     };
 };
+
+w.proto.debug = w.proto.log;
 
 w.mw.alogger = function alogger(next) {
     var start = Date.now();

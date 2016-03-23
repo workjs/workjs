@@ -8,7 +8,7 @@ WorkJS provides several helpers to support application development:
 
 **Shell:** the Developer Shell lets you execute javascript code as done in a route handler function
 
-**Work:** show the module.work data structure
+**Work:** show the global.w data structure
 
 **This::** show the "this" data structure in the request handler
 

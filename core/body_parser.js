@@ -1,4 +1,3 @@
-var w = module.work;
 w.body_parser = {};
 
 var Busboy = require('busboy');

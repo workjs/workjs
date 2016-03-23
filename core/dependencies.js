@@ -1,6 +1,5 @@
-var w = module.work;
 
-w.dep = {};
+w.dep = {work_doc: `These are the external dependencies.`};
 
 w.dep.base64url = module.require('base64url');
 w.dep.bcrypt = module.require('bcrypt');
@@ -18,7 +17,15 @@ w.dep.hljs = module.require('highlight.js');
 w.dep.marked = module.require('marked');
 w.dep.mkdirp = module.require('mkdirp');
 
+w.dep.nodemailer = module.require('nodemailer');
+
 w.dep.path = module.require('path');
+
+//select pg or pg-native
+//w.dep.pgClient = module.require('pg');
+//delete w.dep.pgClient.native; //remove setter if not native bindings
+//w.dep.pgClient = module.require('pg-native');
+w.dep.pg_native = module.require('pg-native');
 
 w.dep.resolve = module.require('resolve');
 

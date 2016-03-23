@@ -1,11 +1,11 @@
 <h1>WorkJS - SMTP</h1>
 
-### work.smtp
-work.smtp is a [Nodemailer](https://github.com/andris9/Nodemailer) transport.
+### w.smtp
+w.smtp is a [Nodemailer](https://github.com/andris9/Nodemailer) transport.
 
 Example usage:
 ~~~nohighlight
-this.work.smtp.sendMail({from:this.conf.smtp_from, to:this.context.email, subject:"workJS Registration",
+w.smtp.sendMail({from:this.conf.smtp_from, to:this.context.email, subject:"workJS Registration",
         text:mailtext, html:htmltext});
 ~~~
 We currently use direct transmission of emails. This is not reliable and without special provision mails might 

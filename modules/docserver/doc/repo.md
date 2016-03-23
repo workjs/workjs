@@ -14,14 +14,14 @@ perhaps even without interruption. Simply mount a new disk at the partition loca
 
 ## Properties
 
-### module.work.cr
+### w.cr
 A content repository initialized with the CR configuration options.
 This is the default repository and currently the only one.
 
-### module.work.REPO
+### w.REPO
 The repository constructor. It allows to create additional CRs.
 
-### module.work.cr.stock(file)
+### w.cr.stock(file)
 ### this.cr.stock(file)
 Stores a file in work_storage and returns its "id". The file_size and md5 sum of the file are 
 used to check if the file was already present and if so the file is not stocked again but the id 
@@ -34,7 +34,7 @@ cr.stock is used by cr.add_file.
 You propably will not use it directly.
 
 ### this.cr.add_file(file, folder, thumb)
-### module.work.cr.add_file(file, folder, thumb)
+### w.cr.add_file(file, folder, thumb)
 Put a file into the CR below folder.
 The optional thumb can point to an additional file in work_storage 
 intended to be used as thumbnail image in an user interface.
@@ -45,7 +45,7 @@ Therefore a file should always be refered from the work_storage table,
 but might not be refered from the work_repo table.
 
 ### this.cr.add_folder(name, folder, thumb)
-### module.work.cr.add_folder(name, folder, thumb)
+### w.cr.add_folder(name, folder, thumb)
 Add a new folder to the CR below folder and with optional thumb.
 
 ### this.cr.download(item_id)

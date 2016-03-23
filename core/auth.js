@@ -1,5 +1,4 @@
 require('./repo.js');
-var w = module.work;
 
 /*
 drop table users cascade ;

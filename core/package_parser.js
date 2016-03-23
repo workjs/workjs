@@ -1,7 +1,6 @@
-var w = module.work;
 
 //watch for change in map for autoreload in development mode
-var DEVELOPMENT = (module.work.conf.servermode == "DEVELOPMENT");
+var DEVELOPMENT = (w.conf.servermode == "DEVELOPMENT");
 
 function reload() {
   for (var pkgname in w.packages) {

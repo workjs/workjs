@@ -8,11 +8,11 @@ Some of the logging functionality is controlled with module flags.
 
 If the "access" flag for a route is true, 
 a line is written into an access log file for each reply sent.
-The access log file is placed in the location configured and it's name is the current date.
+The access log file is placed in the location configured and it's name contains the current date.
 
 If the "debug" flag for a route is true,
 debug lines are written into a debug log file.
-The debug log file is placed in the location configured and it's name is the current date.
+The debug log file is placed in the location configured and it's name contains the current date.
 If debug lines are written, a line is written when the request arrives, 
 a line is written when the reply is sent and additional lines are written 
 when this.debug is called. All debug lines contain an unique request ID 
@@ -51,7 +51,7 @@ Log an additional debug log line for each parameter "data".
 No debug line is written if a debug flag is set to "f".
 
 ### this.log([data][, ...])
-### module.work.log([data][, ...])
+### w.log([data][, ...])
 For each parameter "data" log a line into the message log file.
-<br>Use module.work.log if you want to log from a location which is 
+<br>Use w.log if you want to log from a location which is 
 not in a request handler - e.g. in module initialisation.

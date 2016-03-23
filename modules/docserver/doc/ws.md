@@ -14,7 +14,9 @@ All data is transmitted JSON encoded. Only what can be encoded will find its way
 mw: 
 set flag ws to "t"T
 
+~~~
 /*	get	chat {"ws":"t"}
+~~~
 
 This will load the ws API "ws.js" into the client.
 
@@ -24,7 +26,7 @@ var ws = new worksocket({onopen:fn})
 creates and opens ws connection to the server
 the connection automatically reconnects
 
-An optional onopen function is called eEVERY TIME the worksocket connection is established.
+An optional onopen function is called EVERY TIME the worksocket connection is established.
 
 ws.sendJSON(json)
 send a JSON Object to the server

@@ -1,7 +1,3 @@
-var util = require('util');
-var fs = module.require('fs');
-
-var w = module.work;
 
 var r = [];
 var ro = {};
@@ -31,14 +27,14 @@ function list(n) {
     ro[n.urlpath][n.verb] = {};
     ro[n.urlpath][n.verb].n=n;
     var targetname = n.pkg.dirname+'/'+n.target;
-    if (fs.existsSync(targetname+'.js')) {
+    if (w.dep.fs.existsSync(targetname+'.js')) {
       ro[n.urlpath][n.verb].controller = targetname+'.js';
     } else ro[n.urlpath][n.verb].controller = null;
-    if (fs.existsSync(targetname+'.'+n.verb)) {
+    if (w.dep.fs.existsSync(targetname+'.'+n.verb)) {
       ro[n.urlpath][n.verb].view = targetname+'.'+n.verb;
     } else ro[n.urlpath][n.verb].view = null;
     
-    ro[n.urlpath][n.verb].flags=util.inspect(n.flags);
+    ro[n.urlpath][n.verb].flags=w.dep.util.inspect(n.flags);
     var flags = "";
     for (var f in w.defaultflags) {
       if (n[f]) { flags += " +"+f; } else { flags += " -"+f; }

@@ -1,5 +1,4 @@
 require('./auth.js');
-var w = module.work;
 
 /*
 drop table work_groups cascade;

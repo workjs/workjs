@@ -1,6 +1,5 @@
 
 require('./auth.js');
-var w = module.work;
 
 /*
 drop table work_repo cascade ;
@@ -84,7 +83,7 @@ w.REPO = function repo(cr_root, cr_partition) {
       {item_id:item_id});
     this.ctx.res.setHeader('Content-type', item.mimetype);
     this.ctx.res.setHeader('Content-disposition', disposition+'; filename=' + item.name);
-    this.ctx.sendFileSync(module.work.cr.cr_root, item.location);
+    this.ctx.sendFileSync(w.cr.cr_root, item.location);
   };
   
   this.download = function download(item_id) {
@@ -106,4 +105,4 @@ w.crx.prototype = new w.REPO(w.conf.cr_root, w.conf.cr_partition);
 w.cr = new w.crx(w);
 
 
-//Object.defineProperty(Work.prototype, "cr", {get: function() { return new module.work.crx(this); }});
+//Object.defineProperty(Work.prototype, "cr", {get: function() { return new w.crx(this); }});

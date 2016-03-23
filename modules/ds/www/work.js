@@ -1,4 +1,3 @@
-var w = module.work;
 
 module.exports.get = function get_map(next) {
   const x = {};

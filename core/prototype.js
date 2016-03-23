@@ -1,8 +1,6 @@
 //this is the WorkJS context prototype
+//shared by the global work object and each request.
 
-const w = module.work;
-
-//this is the prototype shared by all contexts
 w.proto.conf = w.conf;
 
 w.proto.cache = w.cache;

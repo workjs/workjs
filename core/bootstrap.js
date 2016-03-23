@@ -1,15 +1,26 @@
 //global.work = {};
 
 //init global work object
-const Module = require('module');
-
 //create context prototype
 const context = {};
+global.w = Object.create(context);
+w.proto = context;
+
+const Module = require('module');
+
+//const orig_require = Module.prototype.require;
+//Module.prototype.require = function(id){ return orig_require(id); }
+//Module.prototype.require = function(id){ return orig_require.call(this, id); }
+
+//create context prototype
+////const context = {};
 //context.proto = context;
 
 //create global work context
-const w = Module.prototype.work = Object.create(context);
-w.proto = context;
+////const w = Module.prototype.work = Object.create(context);
+////w.proto = context;
+
+require("./doc.js");
 
 require("./dependencies.js");
 
@@ -19,8 +30,8 @@ w.cache = {};
 //work_require for autoreload in development mode defaults to require
 Module.prototype.work_require = Module.prototype.require;
 
-w.rootdir = process.cwd();
-w.coredir = __dirname.replace("/core", "");
+w.proto.rootdir = process.cwd();
+w.proto.coredir = __dirname.replace("/core", "");
 
 w.conf = {};
 require("../CONF");
@@ -34,7 +45,7 @@ w.log("WorkJS starting >>> " + w.conf.name);
 if (w.conf.servermode.toUpperCase() == "DEVELOPMENT") {
   Module.prototype.work_require = function requireUncached(module){
     delete require.cache[require.resolve(module)];
-    return require(module);
+    return require.call(w, module);
   };
 };
 
@@ -52,7 +63,7 @@ for (var i = 0; i<w.conf.verbs.length; ++i) {
 ///});
 
 //load database subsystem
-w.dbm = require('./postgres.js')({dburl:w.conf.db_url, poolsize:w.conf.db_poolsize});
+w.dbm = require('./pg_native.js')({dburl:w.conf.db_url, poolsize:w.conf.db_poolsize});
 w.db = w.dbm.db;
 
 //install required DB contents

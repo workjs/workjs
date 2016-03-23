@@ -4,13 +4,10 @@ The WorkJS framework provides a set of conventions, core functionality, middlewa
 
 A WorkJS application is a Node.js package with workjs in its dependencies.
 If "workjs" is required in the package start script, it will load the configuration of the application from a file "CONF" 
-and create http request handlers for the routes definde in a route map file "MAP".
+in the package root and create http request handlers for the routes definde in a route map file "MAP".
 
-On load WorkJS attaches a global work context object to node module which can be used in the WorkJS application code 
+On load WorkJS attaches a global work context object as "w" to node global which can be used in the WorkJS application code 
 to access the WorkJS core functionality.
-~~~
-var w = module.work;
-~~~
 
 WorkJS contains a boilerplate demo application "workshop" which can be cloned for a quick start.
 ~~~

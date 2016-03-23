@@ -1,5 +1,5 @@
-var w = module.work;
-var DEVELOPMENT = (module.work.conf.servermode == "DEVELOPMENT");
+
+var DEVELOPMENT = (w.conf.servermode == "DEVELOPMENT");
 
 w.httpserver = module.require('http').Server(listener);
 w.httpserver.listen(w.conf.port);

@@ -60,30 +60,30 @@ Does not delete sessions from the database - the sweeper will do.
 You can call this to e.g. log an user out.
 But you could also keep the session and only delete the session data.
 
-### work.session.clear(path, value)
+### w.session.clear(path, value)
 Use postgreSQL JSON path to select and delete session from database and from session cache.
 This is to e.g. kick a user.
 
-### work.session.cache
+### w.session.cache
 Session cache in Memory.
 
-### work.session.mw(next)
+### w.session.mw(next)
 session middleware function
 fetch session from cookie and cache and DB, create new session if none present
 
-### work.session.update
+### w.session.update
 conf.session_update
 
-### work.session.decline
+### w.session.decline
 conf.session_decline
 
-### work.session.sweep
+### w.session.sweep
 conf.session_sweep
 
-### work.session.sweeper
+### w.session.sweeper
 interval timer which removes declined sessions
 
-### work.session.drop
+### w.session.drop
 last sweeper run
 
 ### Database table: work_session

@@ -1,29 +1,32 @@
 # WorkJS Context
 
 To create a new application, you must write a map file and implement request handler functions and templates.
-The WorkJS API is attached to the global module.work and to the "this" context of the handler functions.
+The WorkJS API is attached to the global.w onject and to the "this" context of the handler functions.
 
-## module.work
+## global.w
 
-The global "work" object carries all API functionality which is NOT tied to a request context.
-It can be accessed from everywhere via "module.work".
+The global "work" object "w" carries all API functionality which is NOT tied to a request context.
+It can be accessed from everywhere as property of "w".
 
 Example:
 ~~~
-var conf = module.work.conf.servermode;
+var mode = w.conf.servermode;
 ~~~
 
 ## "this"
 
-Functionalty tied to a http request is available in a handler function via the "this" object.
+Functionality tied to a http request is available in a handler function via the "this" object.
 
 Examples:
 ~~~javascript
 this.log("hi xxx");   
 this.context.title = 'Hello World';
+this.tx.one("SELECT * FROM sometable");
 this.db.one("SELECT * FROM sometable");
 this.reply4xx(404, "error ....");
 ~~~
+
+The global functionality is also available with the request object. (Use w.db or this.db.)
 
 ## this.context
 

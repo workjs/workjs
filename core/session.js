@@ -1,4 +1,3 @@
-var w = module.work;
 
 w.session = {};
 w.session.cache = {};
@@ -14,7 +13,7 @@ w.db.query("create table IF NOT EXISTS work_session " +
 function Session(wrk) {
   this.wrk = wrk;
   this.now = wrk.id;
-  this.session_cookie = new w.dep.cookies(wrk.req, wrk.res, w.conf.session_secrets);
+  this.session_cookie = new w.dep.cookies(wrk.req, wrk.res, {keys:w.conf.session_secrets});
   this.id = this.session_cookie.get( w.conf.cookiename, { signed: true } );
   if (this.id) { //request contains a valid session_cookie
     if (this.id > 0) { //session with data

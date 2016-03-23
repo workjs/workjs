@@ -1,4 +1,3 @@
-var w = module.work;
 
 w.db.query("create table IF NOT EXISTS work_chat (" +
   "chat_id serial PRIMARY KEY" +

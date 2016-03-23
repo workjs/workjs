@@ -1,6 +1,4 @@
-var util = require('util');
-
-var w = module.work;
+var util = w.dep.util;
 
 module.exports.get = function get_this(next) {
 //  console.log("get this ----------");

@@ -1,4 +1,3 @@
-var w = module.work;
 
 var confirmationEmailDelay = w.conf.auth_confirmationEmailDelay * 1000;
 

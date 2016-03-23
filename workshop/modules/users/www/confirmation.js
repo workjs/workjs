@@ -1,5 +1,3 @@
-var util = require('util');
-var w = module.work;
 
 //require("../lib/init.js");
 
