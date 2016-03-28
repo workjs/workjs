@@ -5,6 +5,7 @@ w.httpserver = module.require('http').Server(listener);
 w.httpserver.listen(w.conf.port);
 
 require('./work-socket.js').server(w.httpserver);
+require('./requestContext.js');
 
 //////////////////////////////////////////////////////////////
 // listener uses syncho to run each request in a fiber

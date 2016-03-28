@@ -37,7 +37,7 @@ w.conf = {};
 require("../CONF");
 require(w.rootdir+"/CONF");
 
-require("./prototype.js");
+require("./work.js");
 require("./logger.js");
 
 w.log("WorkJS starting >>> " + w.conf.name);

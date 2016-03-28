@@ -1,3 +1,5 @@
+require('./wsContext.js');
+
 w.ws_nodes = {};
 
 function verifyClient(info) {
