@@ -1,6 +1,4 @@
 
-var DEVELOPMENT = (w.conf.servermode == "DEVELOPMENT");
-
 w.httpserver = module.require('http').Server(listener);
 w.httpserver.listen(w.conf.port);
 
@@ -15,28 +13,6 @@ function listener(req, res) {
   w.dep.syncho(function request_handler() {
       var context = w.newRequestContext(req, res);
       route.call(context);
-      if (context.error) {
-        var e = context.error;
-        w.log("ERROR " + e.message + "\n\n" + e.stack);
-        if (!res.headersSent) {
-          var status = e.status || 500;
-          var contenttype = e.contenttype || "text/plain";
-          res.writeHead(status, {"Content-Type": contenttype});
-          
-          switch (status) {
-            case 404: res.write("404 Not Found\n"); break;
-            case 500:
-            default:  res.write("500 Internal Server Error\n"); break;
-          };
-          
-          if (DEVELOPMENT) {
-            res.write(e.message);
-            res.write("\n\n"+e.stack);
-          };
-          
-          res.end();
-        };
-      };
   });
 };
 
@@ -72,18 +48,20 @@ function route() {
         this.context['_location'] = p.slice(i).join('/');
         console.log("//wildcard: " + this.context['_location']);
         n = n.branches['*'];
-        n.handler.call(this);
-        return
-      };
-    return this.reply4xx(404, "no route to: "+this.req.method+' '+this.req.url);
+        break
+    };
+    this.reply4xx(404, "no route to: "+this.req.method+' '+this.req.url);
+    this.end();
+    return
   };
   
   if (n.handler) {
-    this.mapnode = n;
+    // this.mapnode = n;
     n.handler.call(this);
-  } else {
-    //var util = require('util');
-    //console.log(util.inspect(n, {depth:10}));
-    return this.reply5xx(500, "no handler found for: "+this.req.method+' '+this.req.url);
-  };
+    this.end();
+    return
+  }
+
+  return this.reply5xx(500, "no handler found for: "+this.req.method+' '+this.req.url);
+  this.end();
 };

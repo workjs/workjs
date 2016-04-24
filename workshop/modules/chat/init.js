@@ -18,6 +18,7 @@ w.db.query("create table IF NOT EXISTS work_chat_messages (" +
 w.cache.chat_groups = {};
 w.cache.chat_members = {};
 
+w.module("chat", `Simple websocket based chat example`);
 w.chat = {};
 
 w.chat.get_group = function get_group(key) {

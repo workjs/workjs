@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+  {% block head %}{% endblock -%}
   <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
   <link href="/static/app.css" media="all" rel="stylesheet" type="text/css" />
-  <script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-  <link href="https://code.jquery.com/ui/1.11.4/themes/hot-sneaks/jquery-ui.css" media="all" rel="stylesheet" type="text/css" />
-  {% for s in _js -%}
-  <script src="{{ s }}"></script>
-  {% endfor -%}
-  {% block head %}{% endblock -%}
+  <link href="https://code.jquery.com/ui/1.11.4/themes/pepper-grinder/jquery-ui.css"
+    media="all" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/t/ju/dt-1.10.11/datatables.min.css" />
+  {% block link %}{% endblock %}
+  <style>{% block style %}{% endblock %}</style>
 </head>
 <body>
 
@@ -23,6 +22,7 @@
 <a href="/ds/cookies">Cookies</a>
 <a href="/ds/session">Session</a>
 <a href="/doc/">Documentation</a>
+<a href="/ds/modules">Modules</a>
 </div>
 
 <a href="/">WorkJS</a>
@@ -34,6 +34,14 @@
 <div style="position:absolute;top:0;right:10px;">{{ _work.auth.username }}</div>
   <h1>{{ pagetitle }}</h1>
   {% block content %}{% endblock %}
+
+  <script src="http://code.jquery.com/jquery-2.2.3.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/t/ju/dt-1.10.11/datatables.min.js"></script>
+  {% for s in _js -%}
+  <script src="{{ s }}"></script>
+  {% endfor -%}
+  {% block js %}{% endblock -%}
   <script>{% block script %}{% endblock %}</script>
 </body>
 </html>

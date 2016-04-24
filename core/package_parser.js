@@ -211,8 +211,8 @@ function build_handler(n) {
     if (n.flags["access"]) h.push(w.mw.alogger);
     if (n.flags["debug"]) h.push(w.mw.dlogger);
     if (n.flags["formData"]) h.push(w.mw.body_parser);
-    if (n.flags["dbCommit"]) h.push(w.dbm.commit);
-    if (n.flags["dbRollback"]) h.push(w.dbm.rollback);
+    if (n.flags["dbCommit"]) h.push(w.db.mw_commit);
+    if (n.flags["dbRollback"]) h.push(w.db.mw_rollback);
     if (n.flags["dbCommit"] && n.flags["dbRollback"])
       w.log('WARNING dbRollback AND dbCommit in ' + n.verb+' '+n.urlpath);
     if (n.flags["session"]) h.push(w.session.mw);
@@ -231,15 +231,15 @@ function build_handler(n) {
  
       var c_path = n.pkg.dirname+'/'+n.target+".js";
       if (w.dep.fs.existsSync(c_path)) {
-        //console.log("look for controller: ", c_path);
         try { var c = module.work_require(c_path)[n.verb];
-          //if (c) console.log("found!");
+//          if (c) console.log("CONTROLLER: ", n.verb, c_path);
           if (c) h.push(function handler(next) {
             try {
               c.call(this, next);
             }
             catch (e) {
               w.log('ERROR in route handler: '+n.verb+' '+n.urlpath+' -> '+n.taget);
+              w.log(e);
               this.error = e;
             };
           });
@@ -253,10 +253,11 @@ function build_handler(n) {
       if (w.dep.fs.existsSync(v_path)) {
         try {
           var v = n.pkg.templating.compile(v_path);
+//          console.log("VIEW: ", v_path);
           if (v) h.push(function render_template(next) {
             this.body = v.render.sync(v, this.context);
-            this.end(); //shortcut we are last
-            // next();
+            ///this.end();
+            // next(); //shortcut we are last
           });
         } catch (e) {
           w.log('ERROR route to '+n.verb+' '+n.urlpath+' dropped');
@@ -264,12 +265,7 @@ function build_handler(n) {
         };
       };
       
-      //add route only if c or v
-      if (c || v) { n.handler = compose(0, h); }
-      else { 
-        console.log("#### NO controller and NO view found for: "+n.verb+' '+n.urlpath+' -> '+n.taget);
-        n.handler = function(){ if (!this.res.headersSent) { this.end(); }; };
-      };
+      n.handler = compose(0, h);
       
       //check for ws handler
       var ws_path = n.pkg.dirname+'/'+n.target+".ws";
@@ -292,12 +288,11 @@ function compose(i, mwstack){
     var f = mwstack[i];
     var g = compose(i+1, mwstack);
     return function(){
+//      console.log("CALL", f.name);
       f.call(this, g.bind(this));
     };
   } else {
-    return function(){
-      if (!this.res.headersSent) { this.end(); };
-    };
+    return function NoOp(){};
   };
 };
 

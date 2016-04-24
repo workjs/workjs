@@ -57,7 +57,11 @@ w.REPO = function repo(cr_root, cr_partition) {
     };
 
     return stock_id
-  };
+  }.doc(`Stores a file in work_storage and returns its "id". The file_size and md5 sum of the file are used to check if the file was already present and if so the file is not stocked again but the id of the avaliable file is returned.
+  
+  This dow not run in the request transcation, i.e. the file should be stored in the database even if the request transaction rolls back.
+  
+  cr.stock is used by cr.add_file. You propably will not use it directly.`);
 
   //put a single file into the content repository
   this.add_file = function add_file(file, folder, thumb) {

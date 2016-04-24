@@ -1,15 +1,12 @@
 {% extends "master.html" %}
 
-{% block head %}
-<link href="/static/jquery.json-viewer.css" media="all" rel="stylesheet" type="text/css" />
-<script src="/static/jquery.json-viewer.js"></script>
-<style>
+{% block style %}
 div.obj {cursor:pointer;display:inline-block;vertical-align:top;padding-left:1em;background-repeat:no-repeat;}
 div.new, div.closed {border:1px solid red;background-image: url("/static/img/3sr.png");}
 div.open {border:1px solid blue;background-image: url("/static/img/3sd.png");}}
+{% endblock %}
 
-</style>
-<script>
+{% block script %}
 var O = {{ r|safe }};
 $(function() {
   $("#obj").html(O[0]).find(".obj.open").removeClass("open");
@@ -34,7 +31,6 @@ $(function() {
     e.stopPropagation();
   });
 });
-</script>
 {% endblock %}
 
 {% block content %}

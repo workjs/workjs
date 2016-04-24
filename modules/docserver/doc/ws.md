@@ -22,9 +22,12 @@ This will load the ws API "ws.js" into the client.
 
 ## client side API
 
+~~~
 var ws = new worksocket({onopen:fn})
-creates and opens ws connection to the server
-the connection automatically reconnects
+~~~
+
+Create and open a WebSocket connection to the server.
+The connection automatically reconnects.
 
 An optional onopen function is called EVERY TIME the worksocket connection is established.
 
@@ -48,10 +51,10 @@ Register function "name" to be called from server.
 
 The server side function must be defined in the websocket controller file ".ws" (chat.ws in our example).
 
-The API functions are called in a webcocket context which contains:
-this.ws - the original ws object
-this.context - contains parameter from the url path
-this.sess - session information if a session cookie is present, {data:{user_id:0}} if none.
+The API functions are called in a websocket context which contains:
+* this.ws - the original ws object
+* this.context - contains parameter from the url path
+* this.sess - session information if a session cookie is present, {data:{user_id:0}} if none.
 
 function init()
 called EVERY TIME a client opens the page and the websocket connection is established.

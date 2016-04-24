@@ -1,0 +1,28 @@
+{% extends "master.html" %}
+
+{% block style %}
+tr td:first-child {width:10em;font-weight:bold;}
+{% endblock -%}
+
+{% block script %}
+var ws=null;
+
+$(function() {
+//  ws = new worksocket({ onopen:open });
+});
+
+function xx() {
+//  ws.rpc("get_fndoc", "xyz");
+};
+{% endblock %}
+
+{% block content %}
+<h1>ds: Modules!</h1>
+
+<table>
+{% for k in mod_keys %}
+<tr><td><a href='modfn?mod={{ k }}'>{{ k }}</a><td>{{ mod[k].split('\n')[0] }}
+{% endfor %}
+</table>
+
+{% endblock %}

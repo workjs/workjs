@@ -1,7 +1,7 @@
 
-w.sqlcache = {};
+w.module("pg", `Postgresql database interface, based on pg-native`);
 
-module.exports = function(options) {
+w.pg.create_db = function create_db(options) {
   var poolsize = options.poolsize;
   var dburl = options.dburl;
 
@@ -11,16 +11,17 @@ module.exports = function(options) {
     client.connectSync(dburl);
     db.stock(client);
   };
-  w.proto.db = db;
-  return { db:db, rollback:rollback, commit:commit };
-};
+  return db;
+}.doc(`Create a database connection pool with the given database URL and poolsize.`);
 
 function DB() {
   var dbm = this;
   var pool = []; //our pool of DB clients
   var queue = []; //queue of transactions waiting for a client
   
-  this.stock = function(client) {
+  dbm.sqlcache = {};
+  
+  this.stock = function stock(client) {
     if (queue.length) { //there is a transaction waiting
       var tx = queue.shift();
       tx.start(client);
@@ -29,7 +30,7 @@ function DB() {
     };
   };
 
-  this.enqueue = function(tx) {
+  this.enqueue = function enqueue(tx) {
     if (pool.length) { //we have a spare client
       var client = pool.shift();
       tx.start(client);
@@ -38,7 +39,7 @@ function DB() {
     };
   };
   
-  this.begin = function(){
+  this.begin = function begin(){
     return(new TX());
   };
   
@@ -47,18 +48,17 @@ function DB() {
     var my_client = null;
     var startCB;
     
-    this.enqueue = function(cb) {
+    this.enqueue = function enqueue(cb) {
       startCB = cb;
       dbm.enqueue(tx);
     };
     
-    this.start = function(client) { //we got a client -> start this transaction
+    this.start = function start(client) { //we got a client -> start this transaction
       my_client = client;
       startCB();
     };
     
-    this.queryPG = function(qt, pa) {
-      console.log("this.queryPG", qt);
+    this.queryPG = function queryPG(qt, pa) {
       if (my_client) { return my_client.querySync(qt, pa); }
       else {
         this.enqueue.sync(null);
@@ -67,14 +67,14 @@ function DB() {
       };
     };
 
-    this.commit = function() {
+    this.commit = function commit() {
       if (my_client) {
         my_client.querySync("COMMIT");
         dbm.stock(my_client);
       };
     };
 
-    this.rollback = function() {
+    this.rollback = function rollback() {
       if (my_client) {
         my_client.querySync("ROLLBACK");
         dbm.stock(my_client);
@@ -82,15 +82,15 @@ function DB() {
     };
     
     this.query = function query(sql, param) {
-      if (w.sqlcache.hasOwnProperty(sql)) {
-        var x = w.sqlcache[sql];
+      if (dbm.sqlcache.hasOwnProperty(sql)) {
+        var x = dbm.sqlcache[sql];
         var r = x.sql;
         var p = x.param;
       } else {
         var parser = new sqlparser(param);
         var r = sql.replace(/:\w+/g, parser.next);
         var p = parser.param();
-        w.sqlcache[sql]={sql:r, param:p};
+        dbm.sqlcache[sql]={sql:r, param:p};
       };
       var q = [];
       for (var i=0; i<p.length; i++) {
@@ -149,21 +149,6 @@ function DB() {
   };
   
 };
-
-//middlewares
-function rollback(next) {
-      this.tx = w.db.begin();
-      next();
-      this.tx.rollback();
-};
-
-function commit(next) {
-      this.tx = w.db.begin();
-      next();
-      if (this.error) { this.tx.rollback(); }
-      else { this.tx.commit(); }
-};
-
 
 //helper functions
 function sqlparser(params) {

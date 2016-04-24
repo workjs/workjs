@@ -63,11 +63,15 @@ for (var i = 0; i<w.conf.verbs.length; ++i) {
 ///});
 
 //load database subsystem
-w.dbm = require('./pg_native.js')({dburl:w.conf.db_url, poolsize:w.conf.db_poolsize});
-w.db = w.dbm.db;
 
+//w.dbm = require('./pg_native.js')({dburl:w.conf.db_url, poolsize:w.conf.db_poolsize});
+//w.db = w.dbm.db;
 //install required DB contents
+
 w.dep.syncho(function setup() {
+  
+  require('./pg.js');
+  require('./db.js');
 
 //load global db fkts
 ///// deleted !! var dbfkt = require("./db.js");
@@ -105,5 +109,7 @@ require("./package_parser.js");
 
 //start requests processor
 require("./request_processor.js");
+
+w.api_doc.init();
 
 });

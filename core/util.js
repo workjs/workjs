@@ -1,6 +1,6 @@
 var util = require('util');
 
-w.util = {};
+w.module("util", `Various helper functions.`);
 
 w.util.inspect = function inspect(obj) {
   var theObjs = [];
@@ -64,3 +64,6 @@ w.util.inspect = function inspect(obj) {
   };
   
 };
+/*.doc(`Work Object Inspector
+Inspect object with the browser. Requires JQuery and work-util.css and work-util.js.`);
+*/

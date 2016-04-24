@@ -134,7 +134,8 @@ If a subsite module is defined in a route map, the urlpath of the parent MAP fil
 is prependet to all routes of the subsite MAP. The subsite module is "mounted" 
 at the given urlpath.
 
-The "main" script of a module is run during module MAP parsing and is used for module initialisation.
+The "main" script of a module (as defined in package.json or the default index.js)
+is run during module MAP parsing and is used for module initialisation.
 
 Module flags specified for a subsite route are the defaults for all routes of 
 the mounted subsite module.

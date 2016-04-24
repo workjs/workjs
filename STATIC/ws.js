@@ -36,7 +36,7 @@ function worksocket(param) {
     };
     
     ws.onmessage = function(event) {
-      console.log("message", event.data);
+//      console.log("message", event.data);
       var m = JSON.parse(event.data);
       console.log("message ....", m);
       console.log("events", events);

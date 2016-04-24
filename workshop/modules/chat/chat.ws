@@ -1,6 +1,6 @@
 
 module.exports.init = function init() {
-  this.context.chat = this.work.chat.get_group(this.context.key);
+  this.context.chat = this.chat.get_group(this.context.key);
   return this.context.chat && this.context.chat.id;
 };
 
@@ -24,7 +24,7 @@ module.exports.start = function start(p) {
     members[mem.pers_id] = [mem.pers_name, mem.pers_color];
   }
 
-  var messages = this.work.db.rows(
+  var messages = this.db.rows(
     "select pers_id, pers_name, message, datestr as date from (" +
     "select pers_id, pers_name, message" +
     ", date,  to_char(date, 'HH24:MI DD Mon YYYY') as datestr " +
@@ -36,7 +36,7 @@ module.exports.start = function start(p) {
 };
 
 module.exports.say = function say(p) {
-  var date = this.work.db.only("insert into work_chat_messages" +
+  var date = this.db.only("insert into work_chat_messages" +
     " (chat_id, pers_id, pers_name, message)" +
     " VALUES (:id, :pers_id, :pers_name, :msg)" +
      " returning to_char(date, 'HH24:MI DD Mon YYYY');",

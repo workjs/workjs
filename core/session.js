@@ -1,5 +1,7 @@
 
-w.session = {};
+w.module("session", `WorkJS provides a cookie based session support (server side). 
+It uses signed cookies.`);
+
 w.session.cache = {};
 w.session.counter = 0;
 w.session.update = (w.conf.session_update || 60) * 1000;
@@ -71,10 +73,10 @@ Session.prototype.set = function set(key, value) {
       this.id = -this.id;
       this.session_cookie.set("work:sess", this.id, {signed: true, overwrite: true});
       w.db.query("INSERT into work_session (id, last, data) VALUES (:id, :now, :data)",
-        {id:this.id, now:this.now, data:JSON.stringify(this.data)});
+        {id:this.id, now:this.now, data:w.dep.json_stringify_safe(this.data)});
     } else { //update session data
       w.db.query("UPDATE work_session SET last=:now, data=:data WHERE id=:sessid", 
-        {now:this.now, data:JSON.stringify(this.data), sessid:this.id});
+        {now:this.now, data:w.dep.json_stringify_safe(this.data), sessid:this.id});
     };
     w.session.cache[this.id] = {id:this.id, last:this.now, data:this.data};
   } else {

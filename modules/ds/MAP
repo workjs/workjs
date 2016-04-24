@@ -15,3 +15,6 @@
 /caches get	www/caches
 
 /plain/* get	www/plain
+
+/modules get	www/modules
+/modfn	 get	www/modfn 

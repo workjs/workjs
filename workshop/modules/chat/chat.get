@@ -1,7 +1,6 @@
 {% extends "master.html" %}
 
-{% block head %}
-<style>
+{% block style %}
 #my_name {border-radius:0.5em;cursor:pointer;padding:0.5em 1em;border:2px solid;}
 #my_name:hover {border:2px outset;}
 #members div {border:2px solid;background:white;margin:0.2em;}

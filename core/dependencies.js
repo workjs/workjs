@@ -1,5 +1,5 @@
 
-w.dep = {work_doc: `These are the external dependencies.`};
+w.module("dep", `These are the external dependencies.`);
 
 w.dep.base64url = module.require('base64url');
 w.dep.bcrypt = module.require('bcrypt');
@@ -13,6 +13,8 @@ w.dep.dateformat = module.require("dateformat");
 w.dep.fs = module.require('fs');
 
 w.dep.hljs = module.require('highlight.js');
+
+w.dep.json_stringify_safe = module.require('json-stringify-safe');
 
 w.dep.marked = module.require('marked');
 w.dep.mkdirp = module.require('mkdirp');

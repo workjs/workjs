@@ -1,0 +1,75 @@
+{% extends "master.html" %}
+
+{% block style %}
+.pre-wrap {white-space:pre-wrap;}
+tr {cursor:pointer;}
+{% endblock -%}
+
+{% block script %}
+var moddoc = {{moddoc|safe}};
+var data = {{fns|safe}};
+
+var table;
+var m_column;
+
+$(function() {
+  table = $("#ftab").DataTable({
+    data:data,
+    columns: [
+      {title:"Name", data:'name'},
+      {title:"Arguments", data:'params'},
+      {title:"Description", data:'doc', render:function ( data, type, full, meta ) {
+        return data.length > 40 ? data.substr( 0, 38 )+'...' : data }},
+      {title:"Source", data:'src', visible:false},
+      {title:"Module", data:'module'},
+      {title:"Context", data:'context'},
+      {title:"Long", data:'doc', visible:false, className:"pre-wrap"}
+    ]
+  });
+  
+  m_column = table.column(4);
+  $("#modsel").on('change', select_mod);
+  m_column.data().unique().sort().each( function ( d, j ) {
+    $("#modsel").append( '<option value="'+d+'">'+d+'</option>' )
+  });
+  
+  $("#ftab").on("click", "tr", showFN);
+  
+  $("#modsel").val("{{mod}}");
+  select_mod.call($("#modsel")[0]);
+
+});
+
+function showFN() {
+  const data = table.row(this).data();
+  $("#dial #signature").html(data.name+data.params);
+  $("#dial #context").html(data.context);
+  $("#dial #description").html(data.doc);
+  $("#dial #src").html(data.src);
+  $("#dial").dialog({title:data.name+data.params, minWidth:750});
+};
+
+function select_mod() {
+  var val = $(this).val();
+  m_column.search( val ? '^'+val+'$' : '', true, false ).draw();
+
+  $("#moddoc").empty().html(moddoc[val]);
+};
+
+{% endblock %}
+
+{% block content %}
+<select id="modsel"><option value="">all modules</option></select>
+
+<h1>ds Modules: {{ mod }}</h1>
+<p id="moddoc"></p>
+
+<table id="ftab" class="cell-border compact hover" width="100%"></table>
+
+<div id="dial">
+<i id="context"></i>
+<p class="pre-wrap" id="description"></p>
+<pre id="src"></pre>
+</div>
+
+{% endblock %}

@@ -1,12 +1,15 @@
 {% extends "master.html" %}
 
-{% block head %}
+{% block link %}
 <link href="/static/work-util.css" media="all" rel="stylesheet" type="text/css" />
-<script src="/static/work-util.js"></script>
+{% endblock %}
 
-<script>
+{% block js %}
+<script src="/static/work-util.js"></script>
+{% endblock %}
+
+{% block script %}
 $(function() { work_inspect("#obj", {{ x|safe }}); });
-</script>
 {% endblock %}
 
 

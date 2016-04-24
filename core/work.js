@@ -2,7 +2,7 @@
 
 w.id = "---"; //used in logging
 
-w.work = w;
+//w.work = w;
 
 w.marked = function marked(md) {
    return w.dep.marked(md)

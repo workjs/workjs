@@ -23,6 +23,7 @@ Contents:
 <li><a href="utilities.md">Utilities</a>
 <li><a href="repo.md">Content Repository</a>
 <li><a href="ws.md">WebSockets</a>
+<li><a href="doc.md">Modules API Documentation</a>
 </div>
 {{ md|safe }}
 {% endblock %}

@@ -11,7 +11,7 @@ module.exports.server = function(server) {
   
   wss.on('connection', function connection(ws){
     w.dep.syncho(function WSrequest_handler() {
-      var context = w.newWSContext(ws);
+      var context = w.ws.newWSContext(ws);
       ws_route.call(context);
     });
   });
@@ -60,7 +60,11 @@ function ws_route() {
       };
       
       //server side open event missing, but we can call init now
-      var key = n.ws.init && n.ws.init.call(this);
+      try { var key = n.ws.init && n.ws.init.call(this); }
+      catch (e) {
+        this.log('ERROR in WS init: ' + e);
+        return
+       }
       console.log("GROUP", key);
       if (key) {
 
@@ -89,8 +93,8 @@ function ws_route() {
           if (m[2]) {
             try {
               var r = n.ws[m[0]].call(me, m[1]); 
-              console.log("reply RPC", "_rpc", JSON.stringify(r), m[2]);
-              this.send(JSON.stringify(["_rpc", r, m[2]]));
+              //console.log("reply RPC", "_rpc", w.dep.json_stringify_safe(r), m[2]);
+              this.send(w.dep.json_stringify_safe(["_rpc", r, m[2]]));
             }
             catch (e) { w.log('ERROR calling WS handler: ' + m[0] + ' ( ' + m[1] + ' ) --'+e) };
           } else {

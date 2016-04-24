@@ -17,3 +17,5 @@ WorkJS provides several helpers to support application development:
 **Sessions:** show current sessions
 
 **Documentation:** link to this documentation
+
+**Modules:** API documentation
