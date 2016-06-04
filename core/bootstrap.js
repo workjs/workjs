@@ -69,9 +69,11 @@ for (var i = 0; i<w.conf.verbs.length; ++i) {
 //install required DB contents
 
 w.dep.syncho(function setup() {
-  
+
   require('./pg.js');
   require('./db.js');
+  
+  require('./cookies.js');
 
 //load global db fkts
 ///// deleted !! var dbfkt = require("./db.js");

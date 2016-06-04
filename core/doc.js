@@ -38,6 +38,7 @@ function api_doc_and_context(fn, mod, ctx) {
       var src = fn.toString();
       var m = matchfnhead.exec(src);
       var m_name = fn.name || m[1];
+      if (!m_name) return;
       var params = m[2];
       w.api_doc.fdocs[fn]
       = {name:m_name, params:params, src:src, doc:"not documented", module:mod, context:[ctx]};
@@ -45,10 +46,11 @@ function api_doc_and_context(fn, mod, ctx) {
   };
 };
 
-w.api_doc.init = function init() { 
+w.api_doc.init = function init() {
   for (var p1 in w) {
     api_doc_and_context(w[p1], p1, p1);
-    Object.keys(w[p1]).forEach( (p2, i2) => api_doc_and_context(w[p1][p2], p1, p1+"."+p2) );
+    for (var x in w[p1]) { api_doc_and_context(w[p1][x], p1, p1+"."+x); };
+    for (var x in w[p1].prototype) { api_doc_and_context(w[p1].prototype[x], p1, p1+".prototype."+x); };
   };
 }.doc(`Initialize api-doc table.
 WorkJS core/bootstrap calls this when all functions are loaded.`);

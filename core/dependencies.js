@@ -6,6 +6,7 @@ w.dep.bcrypt = module.require('bcrypt');
 
 w.dep.chokidar = module.require('chokidar');
 w.dep.cookies = module.require('cookies');
+w.dep.cookie = module.require('cookie');
 w.dep.crypto = module.require('crypto');
 
 w.dep.dateformat = module.require("dateformat");
@@ -15,6 +16,8 @@ w.dep.fs = module.require('fs');
 w.dep.hljs = module.require('highlight.js');
 
 w.dep.json_stringify_safe = module.require('json-stringify-safe');
+
+w.dep.keygrip = module.require('keygrip');
 
 w.dep.marked = module.require('marked');
 w.dep.mkdirp = module.require('mkdirp');

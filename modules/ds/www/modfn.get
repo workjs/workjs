@@ -24,7 +24,8 @@ $(function() {
       {title:"Module", data:'module'},
       {title:"Context", data:'context'},
       {title:"Long", data:'doc', visible:false, className:"pre-wrap"}
-    ]
+    ],
+    stateSave:true
   });
   
   m_column = table.column(4);
@@ -42,8 +43,9 @@ $(function() {
 
 function showFN() {
   const data = table.row(this).data();
+  console.log("DDDDDD", data.context);
   $("#dial #signature").html(data.name+data.params);
-  $("#dial #context").html(data.context);
+  $("#dial #context").html(data.context.join(", "));
   $("#dial #description").html(data.doc);
   $("#dial #src").html(data.src);
   $("#dial").dialog({title:data.name+data.params, minWidth:750});

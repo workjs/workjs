@@ -111,6 +111,10 @@ requestProto.add_css = function add_css(target) {
     this.context._css.push(target);
 };
 
+requestProto.set_cookie = w.cookie.set;
+requestProto.get_cookie = w.cookie.get;
+requestProto.get_signed_cookie = w.cookie.get_signed;
+
 w.requestProto = requestProto;
 
 w.newRequestContext = function newRequestContext(req, res) {

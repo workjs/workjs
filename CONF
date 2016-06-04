@@ -28,6 +28,9 @@ w.conf.log_access = w.rootdir + "/LOG/access";
 w.conf.log_debug = w.rootdir + "/LOG/debug";
 w.conf.log_message = w.rootdir + "/LOG/debug";
 
+//number of keys to prepare to sign cookies
+w.conf.cookie_keycount = 1000;
+
 //http://www.postgresql.org/docs/9.5/static/libpq-connect.html#LIBPQ-CONNSTRING
 //w.conf.db_url = "pg://fp@localhost/work";
 w.conf.db_url = "postgresql://fp@localhost/work";

@@ -1,7 +1,7 @@
-/static/*	get	www/fileserver {"access":"f", "session":"f", "auth":"f"}
+/static/*	get	www/fileserver {"access":"f", "session":"f", "auth":"f", "cookie":"f"}
 
 #/doc/*	get	www/docserver	{"session":"f", "auth":"f", "debug":"t"}
-/doc	get	:./modules/docserver	{"session":"f", "auth":"f", "debug":"f"}
+/doc	get	:./modules/docserver	{"session":"f", "auth":"f", "debug":"t", "cookie":"f"}
 
-/ds	*	:./modules/ds	{"debug":"t", "dbCommit":"f", "auth":"t"}
+/ds	*	:./modules/ds	{"debug":"t", "dbCommit":"f", "auth":"t", "cookie":"t"}
 

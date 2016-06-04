@@ -210,6 +210,7 @@ function build_handler(n) {
     var h = []; //list of functions (modules, controller, view) for this handler
     if (n.flags["access"]) h.push(w.mw.alogger);
     if (n.flags["debug"]) h.push(w.mw.dlogger);
+    if (n.flags["cookie"]) h.push(w.cookie.mw);
     if (n.flags["formData"]) h.push(w.mw.body_parser);
     if (n.flags["dbCommit"]) h.push(w.db.mw_commit);
     if (n.flags["dbRollback"]) h.push(w.db.mw_rollback);

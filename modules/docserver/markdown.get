@@ -14,6 +14,7 @@ Contents:
 <li><a href="map.md">The MAP</a>
 <li><a href="context.md">Work Context</a>
 <li><a href="postgres.md">Postgres</a>
+<li><a href="cookies.md">Cookies</a>
 <li><a href="logger.md">Logger</a>
 <li><a href="sessions.md">Sessions</a>
 <li><a href="auth.md">Autherntication</a>
