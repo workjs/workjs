@@ -1,4 +1,4 @@
-w.module("cookie", `Support to set, sign and get cookies.`);
+w.module("cookies", `Support to set, sign and get cookies.`);
 
 w.db.query("create table IF NOT EXISTS work_keyring " +
            "(id serial PRIMARY KEY, key text);" );
@@ -16,19 +16,30 @@ for (var i=0; i<w.conf.cookie_keycount; i++) {
   };
 };
 
-w.cookie.mw = function cookie_mw(next) {
+w.cookies.mw = function cookies_mw(next) {
   //get current cookies from request
-  this.cookies = w.dep.cookie.parse(this.req.headers.cookie || '');
-  //prepare list of cookies to send with this reply
-  this.setCookies = [];
+  this.cookies = new w.cookies.proto(this);
   next();
   //set response cookies
-  this.res.setHeader('Set-Cookie', this.setCookies);
-}.doc(`cookie middleware:
-Fetch current cookies from request header and put them into this.cookies.
-Write new cookies set with this.set_cookie into set_cookies reply header.`);
+  this.cookies.reply();
+}.doc(`cookies middleware:
+Fetch current cookies from request header and put them into this.cookies.   
+Write new cookies set with this.cookies.set into reply header.`);
 
-w.cookie.set = function set_cookie(name, val, opt) {
+w.cookies.proto = function Cookies(wrk) {
+  this.wrk = wrk;
+  //get current cookies from request
+  this.current = w.dep.cookie.parse(wrk.req.headers.cookie || '');
+  //prepare list of cookies to send with this reply
+  this.setCookies = [];
+}.doc(`cookies prototype:
+holds current cookies from the request and new set cookies to send with the reply.`);
+
+w.cookies.proto.prototype.reply = function cookies_reply() {
+  this.wrk.res.setHeader('Set-Cookie', this.setCookies);
+}.doc(`Write new cookies set with this.cookies.set into reply header.`);
+
+w.cookies.proto.prototype.set = function cookies_set(name, val, opt) {
   if (opt) {
     opt.httpOnly = (opt.httpOnly !== undefined) ? opt.httpOnly : true;
   } else {
@@ -47,20 +58,19 @@ w.cookie.set = function set_cookie(name, val, opt) {
     opt.httpOnly = true;
     this.setCookies.push(w.dep.cookie.serialize(sigName, idx+'.'+KG.sign(val), opt));
   };
-}.doc(`put cookie and optional signature cookie into this.setCookies`);
+}.doc(`Prepare a cookie and optional a signature cookie to be sent with the reply.`);
 
-w.cookie.get = function get_cookie(name) {
-  return this.cookies[name];
-}.doc(`get cookie value from this.cookies`);
+w.cookies.proto.prototype.get = function cookies_get(name) {
+  return this.current[name];
+}.doc(`get value of cookie with name from current cookies.`);
 
-w.cookie.get_signed = function get_signed_cookie(name) {
+w.cookies.proto.prototype.get_signed = function cookies_get_signed(name) {
   var sign;
-  if ((name in this.cookies) && (sign = this.cookies[name+'.sig'])) {
-    const val = this.cookies[name];
+  if ((name in this.current) && (sign = this.current[name+'.sig'])) {
+    const val = this.current[name];
     const arr = sign.split('.');
     const KG = (new w.dep.keygrip([keyring[arr[0]]]));
     if (KG.sign(val) === arr[1]) return val;
   };
   return undefined
-}.doc(`get signed cookie value from this.cookies,
-verify signature`);
+}.doc(`verify signature and get value of a signed cookie value from current cookies.`);
