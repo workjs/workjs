@@ -1,9 +1,11 @@
 
 /	GET	www/home
 
-@	*	:./modules/users	{"auth":"t"}
+@	*	:./modules/users	{"auth":"t", , "cookie":"t"}
 
-/chat	*	:./modules/chat
+/chat	*	:./modules/chat 
+
+/game1	*	:./modules/game1
 #/admin/users	* :/modules/users	{"debug":"t", "auth":"t"}
 
 #/login	*	www/login

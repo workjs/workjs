@@ -40,11 +40,8 @@ w.cookies.proto.prototype.reply = function cookies_reply() {
 }.doc(`Write new cookies set with this.cookies.set into reply header.`);
 
 w.cookies.proto.prototype.set = function cookies_set(name, val, opt) {
-  if (opt) {
-    opt.httpOnly = (opt.httpOnly !== undefined) ? opt.httpOnly : true;
-  } else {
-    opt = {httpOnly:true}
-  };
+  opt = opt || {};
+  opt.httpOnly = opt.httpOnly || true;
 
   this.setCookies.push(w.dep.cookie.serialize(name, val, opt));
 
@@ -69,8 +66,24 @@ w.cookies.proto.prototype.get_signed = function cookies_get_signed(name) {
   if ((name in this.current) && (sign = this.current[name+'.sig'])) {
     const val = this.current[name];
     const arr = sign.split('.');
-    const KG = (new w.dep.keygrip([keyring[arr[0]]]));
-    if (KG.sign(val) === arr[1]) return val;
+    const sigKey = keyring[arr[0]];
+    if (sigKey) {
+      const KG = (new w.dep.keygrip([keyring[arr[0]]]));
+      if (KG.sign(val) === arr[1]) return val;
+    };
   };
   return undefined
-}.doc(`verify signature and get value of a signed cookie value from current cookies.`);
+}.doc(`Verify signature and get value of a signed cookie value from current cookies.`);
+
+w.cookies.proto.prototype.clear = function cookies_clear(name, opt) {
+  opt = opt || {};
+  opt.expires = new Date("1970");
+  
+  this.setCookies.push(w.dep.cookie.serialize(name, "", opt));
+ 
+  if (opt.sign) {
+    var sigName = name + ".sig";
+    opt.httpOnly = true;
+    this.setCookies.push(w.dep.cookie.serialize(sigName, "", opt));
+  };
+}.doc(`Set cookie to past expire time to claer it.`);

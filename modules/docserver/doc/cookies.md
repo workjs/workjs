@@ -41,6 +41,9 @@ Get signed cookie value from this.cookies.current
 - i.e. checks if a valid signature cookie exists 
 and returns the cookie value from this.cookies.current.
 
+### this.cookies.clear(name, opt)
+Clear cookie with name - i.e. set expires header to 1970.
+
 ### Database table: work_keyring
 Database table used to store a set of random key for cookie signing.
 

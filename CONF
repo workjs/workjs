@@ -40,18 +40,20 @@ w.conf.staticdir = w.coredir + "/STATIC";
 
 w.conf.uploaddir = w.rootdir + "/TMP";
 
-w.conf.session_secrets = ["Top Secret"];
+//name of session cookie
+w.conf.session_cookie = "work:sess";
 
 //update session in DB
 w.conf.session_update = 60;
+
+//wait until first write to DB
+w.conf.session_fresh = 20;
 
 //assume unused session to be stale
 w.conf.session_decline = 2 * 24 * 60 * 60;
 
 //delete stale sessions from DB
 w.conf.session_sweep = 120;
-
-w.conf.cookiename = "work:sess";
 
 //bcrypt hash cost (salt / rounds) - see https://github.com/ncb000gt/node.bcrypt.js
 w.conf.auth_salt = 10;
