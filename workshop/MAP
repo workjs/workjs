@@ -1,7 +1,7 @@
 
 /	GET	www/home
 
-@	*	:./modules/users	{"auth":"t", , "cookie":"t"}
+@	*	:./modules/users	{"auth":"t", "cookie":"t"}
 
 /chat	*	:./modules/chat 
 

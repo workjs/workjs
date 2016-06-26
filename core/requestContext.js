@@ -8,7 +8,6 @@ var requestProto = Object.create(w);
 //finalize request, reply my body
 requestProto.end = function end() {
   if (!this.res.headersSent) {
-    console.log("FFFF");
     if (this.error) {
       var e = this.error;
       w.log("ERROR " + e.status + " " + e.message + "\n\n" + e.stack);
@@ -17,10 +16,10 @@ requestProto.end = function end() {
       this.res.writeHead(status, {"Content-Type": contenttype});
       
       switch (status) {
-        case "404": this.res.write("404 Not Found\n"); break;
-        case "401": this.res.write("401 Unauthorized\n"); console.log("444"); break;
-        case "500":
-        default:  this.res.write("500 Internal Server Error\n"); console.log("DDD");
+        case 404: this.res.write("404 Not Found\n"); break;
+        case 401: this.res.write("401 Unauthorized\n"); break;
+        case 500:
+        default:  this.res.write("500 Internal Server Error\n");
       };
       
       if (DEVELOPMENT) {
@@ -28,55 +27,65 @@ requestProto.end = function end() {
         this.res.write("\n\n"+e.stack);
       };
     } else {
-      this.res.setHeader("Content-Type", "text/html; charset=utf-8");
-      if (!this.body) this.body="";
-      this.res.setHeader("Content-Length", Buffer.byteLength(this.body));
-      this.res.write(this.body);
+      switch (this.res.statusCode) {
+        case 0: if (!this.body) this.body="";
+                this.res.writeHead(200, {
+                 'Content-Type': 'text/html; charset=utf-8',
+                 'Content-Length': Buffer.byteLength(this.body) });
+                this.res.write(this.body);
+                break;
+        case 200: this.res.write(this.body); break;
+        default:
+      }
     };
-    this.res.end();
   };
+  this.res.end();
 }.doc(`reply body, finalize request`);
   
 requestProto.replyJSON = function replyJSON(obj) {
-    this.res.setHeader("Content-Type", "application/json");
-    this.res.end(w.dep.json_stringify_safe(obj));
+    this.body=w.dep.json_stringify_safe(obj);
+    this.res.setHeader('Content-Type', 'application/json');
+    this.res.setHeader('Content-Length', Buffer.byteLength(this.body));
+    this.res.statusCode = 200;
 }.doc(`reply obj as JSON data, finalize request`);
 
 requestProto.reply3xx = function reply3xx(code, path) {
-    this.res.writeHead(code, {"Location": path});
-    this.res.end();
-}.doc(`reply a "3xx" redirect response to "location"`);
+    this.res.setHeader('Location', path);
+    this.res.statusCode = code;
+}.doc(`reply a "3xx" redirect response to location "path"`);
 
 requestProto.reply4xx = function reply4xx(code, message) {
-    this.res.writeHead(code, {"Content-Type": "text/plain"});
+  if (message) { this.res.statusMessage = message; }
+  else {
     switch (code) {
-      case "400": this.res.write("400 Bad Request\n"); break;
-      case "401": this.res.write("401 Unauthorized\n"); break;
-      case "402": this.res.write("402 Payment Required\n"); break;
-      case "403": this.res.write("403 Forbidden\n"); break;
-      case "404": this.res.write("404 Not Found\n"); break;
-      case "405": this.res.write("405 Method Not Allowed\n"); break;
-      case "406": this.res.write("406 Not Acceptable\n"); break;
-      case "407": this.res.write("407 Proxy Authentication Required\n"); break;
-      case "408": this.res.write("408 Request Timeout\n"); break;
-      case "409": this.res.write("409 Conflict\n"); break;
-      case "410": this.res.write("410 Gone\n"); break;
-      case "411": this.res.write("411 Length Required\n"); break;
-      case "412": this.res.write("412 Precondition Failed\n"); break;
-      case "413": this.res.write("413 Payload Too Large\n"); break;
-      case "414": this.res.write("414 URI Too Long\n"); break;
-      case "415": this.res.write("415 Unsupported Media Type\n"); break;
-      case "416": this.res.write("416 Requested Range Not Satisfiable\n"); break;
-      case "417": this.res.write("417 Expectation Failed\n"); break;
-      case "418": this.res.write("418 I'm a teapot\n"); break;
-      case "421": this.res.write("421 Misdirected Request\n"); break;
-      case "426": this.res.write("426 Upgrade Required\n"); break;
-      case "427": this.res.write("428 Precondition Required\n"); break;
-      case "428": this.res.write("429 Too Many Requests\n"); break;
-      case "431": this.res.write("431 Request Header Fields Too Large\n"); break;
-      default: this.res.write("400 Bad Request\n");
-    };
-    this.res.end();
+      case "400": this.res.statusMessage = "400 Bad Request\n"; break;
+      case "401": this.res.statusMessage = "401 Unauthorized\n"; break;
+      case "402": this.res.statusMessage = "402 Payment Required\n"; break;
+      case "403": this.res.statusMessage = "403 Forbidden\n"; break;
+      case "404": this.res.statusMessage = "404 Not Found\n"; break;
+      case "405": this.res.statusMessage = "405 Method Not Allowed\n"; break;
+      case "406": this.res.statusMessage = "406 Not Acceptable\n"; break;
+      case "407": this.res.statusMessage = "407 Proxy Authentication Required\n"; break;
+      case "408": this.res.statusMessage = "408 Request Timeout\n"; break;
+      case "409": this.res.statusMessage = "409 Conflict\n"; break;
+      case "410": this.res.statusMessage = "410 Gone\n"; break;
+      case "411": this.res.statusMessage = "411 Length Required\n"; break;
+      case "412": this.res.statusMessage = "412 Precondition Failed\n"; break;
+      case "413": this.res.statusMessage = "413 Payload Too Large\n"; break;
+      case "414": this.res.statusMessage = "414 URI Too Long\n"; break;
+      case "415": this.res.statusMessage = "415 Unsupported Media Type\n"; break;
+      case "416": this.res.statusMessage = "416 Requested Range Not Satisfiable\n"; break;
+      case "417": this.res.statusMessage = "417 Expectation Failed\n"; break;
+      case "418": this.res.statusMessage = "418 I'm a teapot\n"; break;
+      case "421": this.res.statusMessage = "421 Misdirected Request\n"; break;
+      case "426": this.res.statusMessage = "426 Upgrade Required\n"; break;
+      case "427": this.res.statusMessage = "428 Precondition Required\n"; break;
+      case "428": this.res.statusMessage = "429 Too Many Requests\n"; break;
+      case "431": this.res.statusMessage = "431 Request Header Fields Too Large\n"; break;
+      default: this.res.statusMessage = "400 Bad Request\n";
+    }
+  }
+  this.res.statusCode = code;
 }.doc(`generate a "4xx" client error response
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes`);
 
@@ -119,5 +128,6 @@ w.newRequestContext = function newRequestContext(req, res) {
   context.req.remoteAddress = req.connection.remoteAddress;
   context.res = res;
   context.id = w.unique();
+  context.res.statusCode = 0;
   return context
 };

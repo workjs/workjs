@@ -11,8 +11,8 @@ require('./requestContext.js');
 function listener(req, res) {
   //req.setEncoding('utf8');
   w.dep.syncho(function request_handler() {
-      var context = w.newRequestContext(req, res);
-      route.call(context);
+      var rcontext = w.newRequestContext(req, res);
+      route.call(rcontext);
   });
 };
 
@@ -22,46 +22,51 @@ function listener(req, res) {
 function route() {
   this.method = this.req.method.toLowerCase();
   var n = w.map[this.method];
-  if (!n) { return this.reply4xx(404, "no route for method: "+this.req.method); };
-  
-  this.url = w.dep.url.parse(this.req.url, true);
-  this.query = this.url.query || {};
-  this.context = {};
-  for (var e in this.query) { this.context[e] = this.query[e] }
-  this.context._work = this;
-  this.context._js = [];
-  this.context._css = [];
-  
-  var p = this.url.pathname.split('/');
-  console.log(this.req.url, "route to ===============> " + this.req.method.toUpperCase(), p);
-  
-  for (var i = 1; i < p.length; ++i) {
-    var segment = p[i];
-    if (n.branches[segment]) { n = n.branches[segment]; continue };
-    if (n.branches[':']) { //varname
-        this.context[n.varname] = segment;
-        console.log("//varname: " + n.varname + " = " + this.context[n.varname]);
-        n = n.branches[':'];
-        continue
-    };
-    if (n.branches['*']) { //wildcard
-        this.context['_location'] = p.slice(i).join('/');
-        console.log("//wildcard: " + this.context['_location']);
-        n = n.branches['*'];
-        break
-    };
-    this.reply4xx(404, "no route to: "+this.req.method+' '+this.req.url);
+  if (!n) {
+    this.reply4xx(404, "no route for method: "+this.req.method);
     this.end();
     return
+  } else {
+    this.url = w.dep.url.parse(this.req.url, true);
+    this.query = this.url.query || {};
+    this.context = {};
+    for (var e in this.query) { this.context[e] = this.query[e] }
+    this.context._work = this;
+    this.context._js = [];
+    this.context._css = [];
+  
+    var p = this.url.pathname.split('/');
+    console.log(this.req.url, "route to ===============> " + this.req.method.toUpperCase(), p);
+  
+    for (var i = 1; i < p.length; ++i) {
+      var segment = p[i];
+      if (n.branches[segment]) { n = n.branches[segment]; continue };
+      if (n.branches[':']) { //varname
+          this.context[n.varname] = segment;
+          console.log("//varname: " + n.varname + " = " + this.context[n.varname]);
+          n = n.branches[':'];
+          continue
+      };
+      if (n.branches['*']) { //wildcard
+          this.context['_location'] = p.slice(i).join('/');
+          console.log("//wildcard: " + this.context['_location']);
+          n = n.branches['*'];
+          break
+      };
+      this.reply4xx(404, "no route to: "+this.req.method+' '+this.req.url);
+      this.end();
+      return
+    };
   };
   
   if (n.handler) {
-    // this.mapnode = n;
+    this.mapnode = n;
     n.handler.call(this);
     this.end();
     return
   }
 
-  return this.reply5xx(500, "no handler found for: "+this.req.method+' '+this.req.url);
+  this.reply5xx(500, "no handler found for: "+this.req.method+' '+this.req.url);
   this.end();
+  return
 };
